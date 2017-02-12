@@ -20,7 +20,6 @@ models.source = exports.db.define('source', {
     },
     logo: {
         type: Sequelize.STRING,
-        allowNull: false,
     }
 }, { freezeTableName: true });
 
