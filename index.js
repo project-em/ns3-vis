@@ -2,6 +2,7 @@
 var exports = module.exports = {};
 var express = require('express');
 var queries = require('./db/queries.js');
+var store = require('./db/store.js');
 var app = express();
 
 /* CONFIG */
@@ -20,13 +21,20 @@ app.get('/', (request, response) => {
 /* ROUTES */
 
 app.get('/api/topics', (request, response) => {
-  response.json(queries.topics());
+  queries.topics().then((data) => {
+    response.json(data);
+  })
 });
 
 app.get('/api/topic/:topic/articles', (request, response) => {
-  response.json(queries.articlesFor(request.params.topic));
+  ueries.articlesFor(request.params.topic).then((data) => {
+    response.json(data);
+  })
 });
 
+app.post('/api/topic', (request, response) => {
+
+});
 /* CONFIG */
 
 app.use((req, res) => {

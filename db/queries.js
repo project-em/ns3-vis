@@ -12,6 +12,6 @@ exports.articlesFor = (topic) => {
   })
 };
 
-exports.getTopics = () => {
+exports.topics = () => {
   return schema.models.topic.all().then((topics) => { return topics; });
 }

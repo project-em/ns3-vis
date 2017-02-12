@@ -13,7 +13,7 @@
         <ul class="nav navbar-nav">
             <li ng-class="{'active' : ctrl.isMain()}"><a ui-sref="main.home">Home</a></li>
         </ul>
-        <form class="form-inline">
+        <form class="navbar-form navbar-left form-inline">
             <input type="text" ng-model="ctrl.topic" placeholder="Topic" 
                 uib-typeahead="topic.name for topic in ctrl.filterTopic($viewValue)" 
                 typeahead-no-results="'No results found.'" 

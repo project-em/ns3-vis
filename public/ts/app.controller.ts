@@ -8,6 +8,7 @@ namespace ns3.main {
             private topics: types.Topic[]) {}
 
         public filterTopic = (text: string) => {
+            debugger;
             return this.topics.filter((value: types.Topic) => {
                 return value.name.toLowerCase().indexOf(text.toLowerCase()) != -1;
             });
