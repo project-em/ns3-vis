@@ -4,6 +4,8 @@ namespace ns3.main {
 
         constructor() {            
         }
+
+        
     }
 
     getModule().controller("HomeController", HomeController);

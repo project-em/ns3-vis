@@ -4,6 +4,7 @@ var exports = module.exports = {};
 var models = exports.models = {};
 
 exports.db = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
     dialectOptions: {
         ssl: true
     }

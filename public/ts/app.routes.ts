@@ -12,7 +12,14 @@ namespace ns3.main {
             templateUrl: 'html/layout.html',
             controller: 'AppController',
             controllerAs: 'ctrl',
-            abstract: true
+            abstract: true,
+            resolve: {
+                topics: ($http: ng.IHttpService) => {
+                    return $http.get('/api/topics').then((response) => {
+                        return response.data;
+                    });
+                }
+            }
         })
         .state('main.home', {
             url: '',
@@ -20,29 +27,12 @@ namespace ns3.main {
             controller: 'HomeController',
             controllerAs: 'ctrl',
         })
-        .state('main.songs', {
-            url: 'songs',
-            templateUrl: 'html/songs.html',
-            controller: 'SongsController',
-            controllerAs: 'ctrl',
-        })
-        .state('main.genres', {
-            url: 'genres',
-            templateUrl: 'html/genres.html',
-            controller: 'GenresController',
-            controllerAs: 'ctrl'
-        })
         .state('main.artists', {
             url: 'artists',
             templateUrl: 'html/artists.html',
             controller: 'ArtistController',
             controllerAs: 'ctrl'
         })
-        .state('main.tags', {
-            url: 'tags',
-            templateUrl: 'html/tags.html',
-            controller: 'TagsController',
-            controllerAs: 'ctrl'
-        })
+        ;
     });
 }
