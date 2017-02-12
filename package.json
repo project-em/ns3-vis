@@ -1,0 +1,51 @@
+{
+  "name": "ns3-vis",
+  "version": "0.0.1",
+  "description": "don't be mean",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "postinstall": "./node_modules/bower/bin/bower install && npm install typings grunt --global && typings install && grunt"
+  },
+  "dependencies": {
+    "bower": "^1.8.0",
+    "ejs": "2.4.1",
+    "express": "4.13.3",
+    "mongoose": "^4.6.6",
+    "typescript": "^2.0.9",
+    "typings": "^2.0.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.3",
+    "grunt-ts": "^6.0.0-beta.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sachabest/cis450-project"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.3",
+    "grunt-ts": "^6.0.0-beta.3",
+    "typings": "^2.0.0"
+  }
+}

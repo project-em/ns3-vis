@@ -1,0 +1,33 @@
+<div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <select ng-model="ctrl.songCount">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </span>
+                <input type="text" ng-model="ctrl.songName" placeholder="Artist name" 
+                    uib-typeahead="artist.name for artist in ctrl.autocompleteArtists($viewValue)" 
+                    typeahead-no-results="'No results found.'" 
+                    typeahead-on-select="ctrl.autoCallback($item)"
+                    typeahead-min-length="3"
+                    typeahead-wait-ms="250"
+                    class="form-control">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" ng-disabled="!ctrl.artistId" ng-click="ctrl.loadGenres()">Find Songs</button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <canvas style="max-width: 600px; max-height: 600px;" id="polar-area" class="chart chart-polar-area"
+                chart-data="ctrl.chartData" chart-labels="ctrl.chartLabels">
+            </canvas> 
+        </div>
+    </div>
+</div>

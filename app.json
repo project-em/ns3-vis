@@ -1,0 +1,8 @@
+{
+  "name": "cis-450-project",
+  "description": "",
+  "repository": "https://github.com/sachabest/cis450-project",
+  "logo": "",
+  "keywords": ["node", "express", "static"],
+  "image": "heroku/nodejs"
+}
