@@ -1,4 +1,4 @@
-namespace cis450.main {
+namespace ns3.main {
 
     export class ArtistController {
 

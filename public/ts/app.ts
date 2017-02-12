@@ -1,6 +1,6 @@
-namespace cis450.main {
+namespace ns3.main {
 
-    var app = angular.module('cis450', [
+    var app = angular.module('ns3', [
         'ui.bootstrap',
         'ui.router',
         'chart.js',
@@ -8,6 +8,6 @@ namespace cis450.main {
     ]);
 
     export var getModule = () => {
-        return angular.module('cis450');
+        return angular.module('ns3');
     }
 }

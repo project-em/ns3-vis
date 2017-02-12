@@ -14,9 +14,6 @@
     "bower": "^1.8.0",
     "ejs": "2.4.1",
     "express": "4.13.3",
-    "mongoose": "^4.6.6",
-    "typescript": "^2.0.9",
-    "typings": "^2.0.0",
     "grunt": "~0.4.5",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-jshint": "~0.10.0",
@@ -24,7 +21,13 @@
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-express-server": "^0.5.3",
-    "grunt-ts": "^6.0.0-beta.3"
+    "grunt-ts": "^6.0.0-beta.3",
+    "pg": "^6.1.2",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.30.2",
+    "sequelize-cli": "^2.5.1",
+    "typescript": "^2.0.9",
+    "typings": "^2.0.0"
   },
   "repository": {
     "type": "git",

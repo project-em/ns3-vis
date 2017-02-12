@@ -1,4 +1,4 @@
-namespace cis450.main {
+namespace ns3.main {
 
     getModule().config(($stateProvider: ng.ui.IStateProvider, $locationProvider: ng.ILocationProvider,
         $urlRouterProvider: ng.ui.IUrlRouterProvider) => {
