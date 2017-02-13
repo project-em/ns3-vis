@@ -13,6 +13,7 @@ exports.newTopic = (name) => {
         );
     }
 }
+
 exports.newSource = (name, url, logo) => {
     if (!name || !url) {
         throw "incomplete data";

@@ -11,6 +11,7 @@
     "postinstall": "./node_modules/bower/bin/bower install && npm install typings grunt --global && typings install && grunt"
   },
   "dependencies": {
+    "body-parser": "^1.16.1",
     "bower": "^1.8.0",
     "ejs": "2.4.1",
     "express": "4.13.3",

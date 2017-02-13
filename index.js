@@ -1,6 +1,7 @@
 /* INCLUDES */
 var exports = module.exports = {};
 var express = require('express');
+var body_parser = require('body-parser');
 var queries = require('./db/queries.js');
 var store = require('./db/store.js');
 var app = express();
@@ -10,6 +11,7 @@ app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
+app.use(body_parser.json());
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -27,14 +29,16 @@ app.get('/api/topics', (request, response) => {
 });
 
 app.get('/api/topic/:topic/articles', (request, response) => {
-  ueries.articlesFor(request.params.topic).then((data) => {
+  queries.articlesFor(request.params.topic).then((data) => {
     response.json(data);
   })
 });
 
 app.post('/api/topic', (request, response) => {
-
+  store.newTopic(request.body.name);
+  response.sendStatus(200);
 });
+
 /* CONFIG */
 
 app.use((req, res) => {

@@ -28,6 +28,7 @@ models.topic = exports.db.define('topic;', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
     }
 }, { freezeTableName: true });
 
@@ -58,6 +59,6 @@ models.sentence = exports.db.define('sentence', {
 
 models.source.hasMany(models.article);
 models.article.hasMany(models.sentence);
-models.article.hasOne(models.topic);
+models.article.belongsTo(models.topic);
 
-exports.db.sync();
+exports.db.sync({force: true});
