@@ -5,7 +5,16 @@ namespace ns3.main {
         topic: types.Topic;
 
         public constructor(private $state: ng.ui.IStateService,
-            private topics: types.Topic[]) {}
+            private $stateParams: ng.ui.IStateParamsService,
+            private $http: ng.IHttpService,
+            private topics: types.Topic[]) {
+            let topicId = this.$stateParams['id'];
+            if (topicId) {
+                this.$http.get('/api/topic/' + topicId + '/name').then((response) => {
+                    this.topic = response.data as types.Topic;
+                })
+            }
+        }
 
         public filterTopic = (text: string) => {
             return this.topics.filter((value: types.Topic) => {
@@ -14,7 +23,7 @@ namespace ns3.main {
         }
 
         public autoCallback = (topic: types.Topic) => {
-            // go to topic page here
+            this.$state.go('main.topic', {topicId: topic.id });
         };
 
         public isMain = () => {

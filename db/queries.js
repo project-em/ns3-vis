@@ -13,6 +13,11 @@ exports.articlesFor = (topic) => {
   })
 };
 
+exports.topicName = (topicId) => {
+  var topic = schema.models.topic.findById(topicId);
+  return topic;
+}
+
 exports.topics = () => {
   return schema.models.topic.all().then((topics) => { return topics; });
 }

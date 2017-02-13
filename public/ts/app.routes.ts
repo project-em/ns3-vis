@@ -34,13 +34,13 @@ namespace ns3.main {
             controllerAs: 'ctrl'
         })
         .state('main.topic', {
-            url: 'topic/:topicId',
-            templateUrl: 'html/admin.html',
-            controller: 'AdminController',
+            url: 'topic?id',
+            templateUrl: 'html/topic.html',
+            controller: 'TopicController',
             controllerAs: 'ctrl',
             resolve: {
                 data: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
-                    return $http.get('/api/topic/' + $stateParams['topicId']).then((response) => {
+                    return $http.get('/api/topic/' + $stateParams['id'] + '/name').then((response) => {
                         return response.data as types.Source[];
                     });
                 }

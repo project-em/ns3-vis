@@ -13,7 +13,7 @@ app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/bower_components'));
-app.use(body_parser.json());
+// app.use(body_parser.json());
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -32,6 +32,12 @@ app.get('/api/topics', (request, response) => {
 
 app.get('/api/topic/:topic/articles', (request, response) => {
   queries.articlesFor(request.params.topic).then((data) => {
+    response.json(data);
+  })
+});
+
+app.get('/api/topic/:topic/name', (request, response) => {
+  queries.topicName(request.params.topic).then((data) => {
     response.json(data);
   })
 });
