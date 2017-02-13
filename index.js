@@ -1,4 +1,5 @@
 /* INCLUDES */
+
 var exports = module.exports = {};
 var express = require('express');
 var body_parser = require('body-parser');
@@ -7,6 +8,7 @@ var store = require('./db/store.js');
 var app = express();
 
 /* CONFIG */
+
 app.set('port', (process.env.PORT || 5000));
 
 app.use(express.static(__dirname + '/public'));
@@ -30,6 +32,12 @@ app.get('/api/topics', (request, response) => {
 
 app.get('/api/topic/:topic/articles', (request, response) => {
   queries.articlesFor(request.params.topic).then((data) => {
+    response.json(data);
+  })
+});
+
+app.get('/api/article/:article', (request, response) => {
+  queries.articleBias(request.params.article).then((data) => {
     response.json(data);
   })
 });

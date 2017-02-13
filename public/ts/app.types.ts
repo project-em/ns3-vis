@@ -13,5 +13,15 @@ namespace ns3.main.types {
         url: string;
         body: string;
         topic: Topic;
+        bias?: number;
     }
+
+    export interface Source extends Data {
+        name: string;
+        logo: string;
+        url: string;
+        articles?: Article[];
+        bias?: number;
+    }
+
 }

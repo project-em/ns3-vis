@@ -16,7 +16,7 @@ namespace ns3.main {
             resolve: {
                 topics: ($http: ng.IHttpService) => {
                     return $http.get('/api/topics').then((response) => {
-                        return response.data;
+                        return response.data as types.Topic[];
                     });
                 }
             }
@@ -27,11 +27,24 @@ namespace ns3.main {
             controller: 'HomeController',
             controllerAs: 'ctrl',
         })
-        .state('main.artists', {
-            url: 'artists',
-            templateUrl: 'html/artists.html',
-            controller: 'ArtistController',
+        .state('main.admin', {
+            url: 'admin',
+            templateUrl: 'html/admin.html',
+            controller: 'AdminController',
             controllerAs: 'ctrl'
+        })
+        .state('main.topic', {
+            url: 'topic/:topicId',
+            templateUrl: 'html/admin.html',
+            controller: 'AdminController',
+            controllerAs: 'ctrl',
+            resolve: {
+                data: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
+                    return $http.get('/api/topic/' + $stateParams['topicId']).then((response) => {
+                        return response.data as types.Source[];
+                    });
+                }
+            }
         })
         ;
     });
