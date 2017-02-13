@@ -8,7 +8,7 @@ namespace ns3.main {
             requireBase: false
         });
         $stateProvider.state('main', {
-            url: '/',
+            url: '',
             templateUrl: 'html/layout.html',
             controller: 'AppController',
             controllerAs: 'ctrl',
@@ -22,19 +22,19 @@ namespace ns3.main {
             }
         })
         .state('main.home', {
-            url: '',
+            url: '/',
             templateUrl: 'html/home.html',
             controller: 'HomeController',
             controllerAs: 'ctrl',
         })
         .state('main.admin', {
-            url: 'admin',
+            url: '/admin',
             templateUrl: 'html/admin.html',
             controller: 'AdminController',
             controllerAs: 'ctrl'
         })
         .state('main.topic', {
-            url: 'topic?id',
+            url: '/topic?id',
             templateUrl: 'html/topic.html',
             controller: 'TopicController',
             controllerAs: 'ctrl',
