@@ -5,9 +5,9 @@ var exports = module.exports = {};
 exports.articlesFor = (topic) => {
   return schema.models.article.findAll({
     where: {
-      'Topic.id': topic
+      'topicId': topic
     },
-    group: ['source.id']
+    group: ['sourceId']
   }).then((articles) => {
     return articles;
   })
