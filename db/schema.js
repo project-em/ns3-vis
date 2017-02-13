@@ -57,8 +57,11 @@ models.sentence = exports.db.define('sentence', {
     }
 }, { freezeTableName: true });
 
+models.topic.hasMany(models.article);
 models.source.hasMany(models.article);
 models.article.hasMany(models.sentence);
 models.article.belongsTo(models.topic);
+models.article.belongsTo(models.source);
+models.sentence.belongsTo(models.article);
 
 exports.db.sync({force: true});

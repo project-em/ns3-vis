@@ -18,25 +18,19 @@ exports.topics = () => {
 }
 
 exports.articleBias = (articleId) => {
+  var totalSum;
   return schema.models.article.findById(articleId).then((article) => {
     if (!article) return 0;
-    schema.models.sentence.sum(
-      {
-        where: {
-          'article.id': articleId
-        }
-      }
+    schema.models.sentence.sum('bias',
+      { where: { 'articleId': articleId }}
     ).then((sum) => {
+      totalSum = sum;
       schema.models.sentence.count(
-        {
-          where: {
-            'article.id': articleId
-          }
-        }
-      )
-    }).then((count) => {
-      article.bias = count == 0 ? 0 : sum / count;
-      return article;
+        { where: { 'articleId': articleId }}
+      ).then((count) => {
+        article.bias = count == 0 ? 0 : totalSum / count;
+        return article;
+      });
     });
   });
 }
