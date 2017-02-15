@@ -97,7 +97,7 @@ function crawlArticlesForTopic(topic) {
       var allObjs = NYT_objs.concat(GUAR_objs);
       allObjs.forEach(function(value, index) {
           var source = value.source;
-                  
+          
           store.newArticle(value).then(function(ArticleDBObj) {
               queries.sourceByName(source).then(function(result){
                   ArticleDBObj.updateAttributes({
@@ -169,18 +169,15 @@ function getGuardianArticles(topic) {
 
 function pullBodyFromURLSet(data, source) {
   bodyList = [];
-
-
   data.forEach(function(value, index) {
-      pullBodyOfURL(value.url, source, function(body) {
-          bodyList.push(body);
-      });
+    pullBodyOfURL(value.url, source, function(body) {
+      bodyList.push(body);
     });
-
-    return bodyList;
+  });
+  return bodyList;
 }
 
-function pullBodyOfURL(url, source) {
+function pullBodyOfURL(url, source, callback) {
   return jsdom.env({
     url: url,
     scripts: ["http://code.jquery.com/jquery.js"],
@@ -189,14 +186,14 @@ function pullBodyOfURL(url, source) {
 
         var bodyStrings = [];
         var storyblocks = $(divClassTagFromSource(source));
-        console.log("HELLOOooooooooooooooooooooo");
-        console.log(storyblocks);
-        storyblocks.forEach(function(value, index) {
-            bodyStrings.push(value.text());
+        console.log("at: " + url);
+        console.log("found: " + storyblocks.length);
+        storyblocks.each(function(idx, val) {
+            bodyStrings.push($(val).text());
         });
         
         var storyText = bodyStrings.join(" ");
-        return storyText;
+        callback(storyText);
     }
   });
 
@@ -206,7 +203,7 @@ function divClassTagFromSource(source) {
     if (source === "new york times") 
       return '.story-body-text.story-content';
     else if (source === "guardian") 
-      return 'content__article-body.from-content-api.js-article__body p';
+      return '.content__article-body.from-content-api.js-article__body p';
     
 }
 
