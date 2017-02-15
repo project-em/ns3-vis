@@ -22,6 +22,16 @@ exports.topics = () => {
   return schema.models.topic.all().then((topics) => { return topics; });
 }
 
+exports.sourceByName = (sourceName) => {
+  return source = schema.models.source.findAll({
+      where: {
+        name: sourceName
+      }
+  }).then((sources) => {
+      return sources[0];
+  })
+}
+
 exports.articleBias = (articleId) => {
   var totalSum;
   return schema.models.article.findById(articleId).then((article) => {
