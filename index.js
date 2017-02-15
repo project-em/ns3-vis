@@ -6,7 +6,7 @@ var body_parser = require('body-parser');
 var queries = require('./db/queries.js');
 var store = require('./db/store.js');
 var config = require('./config.json')
-var Q = require("q");
+var async = require("async");
 var app = express();
 
 const get = require('simple-get');
@@ -80,37 +80,44 @@ app.listen(app.get('port'), function() {
 
 
 function crawlArticlesForTopic(topic) {
-  var TopicDBObj = store.newTopic(topic);
-  var NYTSource = store.newSource("New York Times", getSourceURLFromSourceName("New York Times"));
-  var GUARSource = store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"));
+  store.newTopic(topic).then(function(TopicDBObj) {
+    store.newSource("New York Times", getSourceURLFromSourceName("New York Times")).then(function(NYTSourceObj){
+      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian")).then(function(GUARSourceObj){
 
-  var NYT_data = getNYTArticles(topic);
-
-  getGuardianArticles(topic).then(function(GUAR_data){
-
-
-      var NYT_bodies = pullBodyFromURLSet(NYT_data, "new york times")
-      var GUAR_bodies = pullBodyFromURLSet(GUAR_data, "guardian")
-      var NYT_objs = createArticleJSObjects(NYT_data, NYT_bodies, "New York Times");
-      var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, "The Guardian");
-
-      var allObjs = NYT_objs.concat(GUAR_objs);
-      allObjs.forEach(function(value, index) {
-          var source = value.source;
+        var NYT_data = getNYTArticles(topic);
+    
+        getGuardianArticles(topic).then(function(GUAR_data){
           
-          store.newArticle(value).then(function(ArticleDBObj) {
-              queries.sourceByName(source).then(function(result){
-                  ArticleDBObj.updateAttributes({
-                      "topic;id": TopicDBObj.id,
-                      "sourceId": result.id
+          pullBodyFromURLSet(NYT_data, "new york times").then(function(NYT_bodies) {
+            pullBodyFromURLSet(GUAR_data, "guardian").then(function(GUAR_bodies) {
+              var NYT_objs = createArticleJSObjects(NYT_data, NYT_bodies, "New York Times");
+              var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, "The Guardian");
+
+              var allObjs = NYT_objs.concat(GUAR_objs);
+              allObjs.forEach(function(value, index) {
+                  var source = value.source;
+                  var sourceId = "";
+                  if (source === "New York Times") {
+                    sourceId = NYTSourceObj.id;
+                  } else if (source === "The Guardian") {
+                    sourceId = GUARSourceObj.id;
+                  }
+
+                  store.newArticle(value, TopicDBObj.id, sourceId).then(function(ArticleDBObj) {
+                      
                   });
               });
+            })
+          }).catch((error) => {
+            console.log("error in pulling urls!")
           });
+          
 
+
+          });
+        });
       });
- });
-  
-      
+    });  
 }
 
 
@@ -167,14 +174,31 @@ function getGuardianArticles(topic) {
 
 }
 
+// function pullBodyFromURLSet(data, source) {
+  
+//   return new Promise(function(resolve, reject) {
+//     bodyList = [];
+//     data.forEach(function(value, index) {
+//       pullBodyOfURL(value.url, source, function(body) {
+//         bodyList.push(body);
+//       });
+//     });
+
+//     if (bodyList.length != 0) {
+//       resolve(bodyList);
+//     } else {
+//       reject("empty story!");
+//     }
+    
+//   });
+  
+  
+// }
+
 function pullBodyFromURLSet(data, source) {
-  bodyList = [];
-  data.forEach(function(value, index) {
-    pullBodyOfURL(value.url, source, function(body) {
-      bodyList.push(body);
+    async.eachSeries(data, function(item, callback) {
+        var url = item.url;
     });
-  });
-  return bodyList;
 }
 
 function pullBodyOfURL(url, source, callback) {

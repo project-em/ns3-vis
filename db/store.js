@@ -41,14 +41,16 @@ exports.newArticle = (name, body, url) => {
     }
 };
 
-exports.newArticle = (articleObj) => {
+exports.newArticle = (articleObj, topicId, sourceId) => {
     if (!articleObj) {
         throw "incomplete data";
     } else {
         return schema.models.article.create({
             name: articleObj.headline,
             body: articleObj.body,
-            url: articleObj.url
+            url: articleObj.url,
+            "topic;Id": topicId,
+            sourceId: sourceId
         });
     }
 }
