@@ -12,6 +12,8 @@ var app = express();
 const get = require('simple-get');
 var jsdom = require("jsdom");
 const guardian = require('guardian-js');
+const Promise = require('bluebird');
+const request = require('request');
 
 
 var NYT_KEY = config["NYT_KEY"];
@@ -84,14 +86,20 @@ function crawlArticlesForTopic(topic) {
     store.newSource("New York Times", getSourceURLFromSourceName("New York Times")).then(function(NYTSourceObj){
       store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian")).then(function(GUARSourceObj){
 
-        var NYT_data = getNYTArticles(topic);
-    
-        getGuardianArticles(topic).then(function(GUAR_data){
-          
+        getNYTArticles(topic).then(function(NYT_data){
+          //console.log("NYT_DATA_LENGTH: " + NYT_data.length);
+          getGuardianArticles(topic).then(function(GUAR_data){
+          //console.log("GUAR_DATA_LENGTH: " + GUAR_data.length);
           pullBodyFromURLSet(NYT_data, "new york times").then(function(NYT_bodies) {
+            //console.log("NYT BODIES LENGTH: " + NYT_bodies.length);
             pullBodyFromURLSet(GUAR_data, "guardian").then(function(GUAR_bodies) {
-              var NYT_objs = createArticleJSObjects(NYT_data, NYT_bodies, "New York Times");
-              var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, "The Guardian");
+              //console.log("GUAR BODIES LENGTH: " + GUAR_bodies.length);
+
+              var NYT_sentences = pullSentencesFromBodies(NYT_bodies);
+              var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
+                
+              var NYT_objs = createArticleJSObjects(NYT_data, NYT_bodies, NYT_sentences, "New York Times");
+              var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, GUAR_sentences, "The Guardian");
 
               var allObjs = NYT_objs.concat(GUAR_objs);
               allObjs.forEach(function(value, index) {
@@ -104,20 +112,26 @@ function crawlArticlesForTopic(topic) {
                   }
 
                   store.newArticle(value, TopicDBObj.id, sourceId).then(function(ArticleDBObj) {
-                      
+                    console.log("article added");
+                    value.sentences.forEach(function(sentence, index) {
+                      store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
+
+                      });
+                    });
                   });
-              });
-            })
-          }).catch((error) => {
-            console.log("error in pulling urls!")
-          });
-          
 
-
+                  
+                });
+              })
+            }).catch(function(error) {
+                console.log(error);
+                console.log("error in pulling bodies");
+            });
           });
         });
       });
-    });  
+    });
+  });  
 }
 
 
@@ -129,23 +143,32 @@ function getNYTArticles(topic) {
    
    var NYT_data = [];
    
-   get.concat(urlString, function (err, res, data) {
-     if (err) throw err
-     
-     var docs = JSON.parse(data.toString()).response.docs;
-    
-     docs.forEach(function(value, index) {
-       var article_data = {
-         url: value["web_url"],
-         headline: value.headline.main
-       }
-       NYT_data.push(article_data);
 
-     });
+   return searchNYT(topic).then(function(response) {
 
+     var docs = JSON.parse(response.body.toString()).response.docs;
+
+          docs.forEach(function(value, index) {
+            var article_data = {
+              url: value["web_url"],
+              headline: value.headline.main
+            }
+
+            NYT_data.push(article_data);
+          });
+
+          return NYT_data;
    });
+   
+}
 
-   return NYT_data;
+function searchNYT(topic) {
+    var get = Promise.promisify(request.get);
+    var key = NYT_KEY;
+    var urlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    urlString = urlString + "?q=" + topic.replace(' ', '+') + "&fq=document_type:(\"article\")" + "&api-key=" + NYT_KEY + "&response-format=jsonp" + "&callback=svc_search_v2_articlesearch";
+
+    return get(urlString);
 }
 
 function getGuardianArticles(topic) {
@@ -156,7 +179,6 @@ function getGuardianArticles(topic) {
     var GUAR_data = [];
 
     return guardApi.content.search(topic, header).then(function(response){
-          
           var docs = JSON.parse(response.body.toString()).response.results;
 
           docs.forEach(function(value, index) {
@@ -174,52 +196,51 @@ function getGuardianArticles(topic) {
 
 }
 
-// function pullBodyFromURLSet(data, source) {
-  
-//   return new Promise(function(resolve, reject) {
-//     bodyList = [];
-//     data.forEach(function(value, index) {
-//       pullBodyOfURL(value.url, source, function(body) {
-//         bodyList.push(body);
-//       });
-//     });
+function pullBodyFromURLSet(articles_data, source) {
+    var bodyList = [];
+    var totallength = articles_data.length;
+    console.log("INPULL URL SET");
+    console.log("DATA LENGTH: " + articles_data.length);
+    var urlPullPromises = articles_data.map(
+      function(x) { return pullBodyOfURL(x, source); }
+    );
 
-//     if (bodyList.length != 0) {
-//       resolve(bodyList);
-//     } else {
-//       reject("empty story!");
-//     }
+    var stories = Promise.all(urlPullPromises);
+  
+    return stories;
     
-//   });
-  
-  
-// }
-
-function pullBodyFromURLSet(data, source) {
-    async.eachSeries(data, function(item, callback) {
-        var url = item.url;
-    });
 }
 
-function pullBodyOfURL(url, source, callback) {
-  return jsdom.env({
-    url: url,
-    scripts: ["http://code.jquery.com/jquery.js"],
-    done: function (err, window) {
-        var $ = window.$;
+function pullBodyOfURL(article_data, source) {
+  return new Promise(function(resolve, reject) {
+    jsdom.env({
+        url: article_data.url,
+        scripts: ["http://code.jquery.com/jquery.js"],
+        done: function (err, window) {
+            var $ = window.$;
 
-        var bodyStrings = [];
-        var storyblocks = $(divClassTagFromSource(source));
-        console.log("at: " + url);
-        console.log("found: " + storyblocks.length);
-        storyblocks.each(function(idx, val) {
-            bodyStrings.push($(val).text());
-        });
-        
-        var storyText = bodyStrings.join(" ");
-        callback(storyText);
-    }
+            var bodyStrings = [];
+            var storyblocks = $(divClassTagFromSource(source));
+            console.log("at: " + article_data.url);
+            console.log("found: " + storyblocks.length);
+            storyblocks.each(function(idx, val) {
+                bodyStrings.push($(val).text());
+            });
+            
+            var storyText = bodyStrings.join(" ");
+            console.log("about to do callback in pullBodyofURL");
+            
+            try {
+              resolve(storyText);
+            } catch (ex) {
+              console.log("error in pullBodyOfURL")
+              reject(ex);
+            }
+        }
+    });
+    
   });
+  
 
 }
 
@@ -231,18 +252,20 @@ function divClassTagFromSource(source) {
     
 }
 
-function createArticleJSObjects(data, bodies, source) {
+function createArticleJSObjects(data, bodies, sentences, source) {
   var objs = [];
   for (var i = 0; i < data.length; i++) {
     var urlVal = data[i].url;
     var headline = data[i].headline;
     var bodyVal = bodies[i];
+    var art_sentences = sentences[i];
 
     var obj = {
       url: urlVal,
       body: bodyVal,
       source: source,
-      headline: headline
+      headline: headline,
+      sentences: art_sentences
     }
 
     objs.push(obj);
@@ -257,4 +280,16 @@ function getSourceURLFromSourceName(sourceName) {
   } else if (sourceName === "The Guardian") {
     return "https://www.theguardian.com";
   }
+}
+
+function pullSentencesFromBodies(bodies) {
+  
+  var allSentences = [];
+
+  bodies.forEach(function(value, index) {
+      var sentences = value.split("(\.\w[A-Z])");
+      allSentences.push(sentences);
+  });
+
+  return allSentences;
 }

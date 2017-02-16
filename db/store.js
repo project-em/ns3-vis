@@ -55,3 +55,15 @@ exports.newArticle = (articleObj, topicId, sourceId) => {
     }
 }
 
+exports.newSentence = (articleObj, sentence) => {
+    if (!articleObj) {
+        throw "incomplete data";
+    } else {
+        return schema.models.sentence.create({
+            text: sentence,
+            bias: 0, //default for now
+            articleId: articleObj.id
+        });
+    }
+}
+

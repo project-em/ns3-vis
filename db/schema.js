@@ -7,7 +7,8 @@ exports.db = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     dialectOptions: {
         ssl: true
-    }
+    },
+    logging: false
 });
 
 models.source = exports.db.define('source', {
@@ -38,7 +39,7 @@ models.article = exports.db.define('article', {
         allowNull: false
     },
     body: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
     },
     url: {
         type: Sequelize.STRING,
@@ -48,7 +49,7 @@ models.article = exports.db.define('article', {
 
 models.sentence = exports.db.define('sentence', {
     text: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false,
     },
     bias: {
