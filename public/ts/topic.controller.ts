@@ -3,6 +3,17 @@ namespace ns3.main {
     export class TopicController {
 
         chart: any;
+        barOptions = {
+            scales: {
+                xAxes:  [{
+                    ticks: {
+                        min: -10,
+                        max: 10,
+                        stepSize: 2
+                    }
+                }]
+            }
+        };
         constructor(private data: types.Source[],
             private $stateParams: ng.ui.IStateParamsService) {     
             if ($stateParams['id'] == -1) {
