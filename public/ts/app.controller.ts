@@ -23,7 +23,7 @@ namespace ns3.main {
         }
 
         public autoCallback = (topic: types.Topic) => {
-            this.$state.go('main.topic', {topicId: topic.id });
+            this.$state.go('main.topic', { id: topic.id });
         };
 
         public isMain = () => {

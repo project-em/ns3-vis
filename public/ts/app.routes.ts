@@ -40,7 +40,7 @@ namespace ns3.main {
             controllerAs: 'ctrl',
             resolve: {
                 data: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
-                    return $http.get('/api/topic/' + $stateParams['id'] + '/name').then((response) => {
+                    return $http.get('/api/topic/' + $stateParams['id'] + '/articles').then((response) => {
                         return response.data as types.Source[];
                     });
                 }

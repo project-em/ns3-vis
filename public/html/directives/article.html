@@ -3,7 +3,11 @@
         <div>
             <h4 ng-bind="article.name">
         </div>
-        <div ng-bind="article.body"></div>
+        <div ng-bind="article.body"
+            style="overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 5;
+                -webkit-box-orient: vertical; "></div>
     </div>
     <div class="col-md-4">
         <canvas id="article-bar" class="chart chart-horizontal-bar"

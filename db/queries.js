@@ -3,14 +3,18 @@ var schema = require('./schema.js');
 var exports = module.exports = {};
 
 exports.articlesFor = (topic) => {
-  return schema.models.article.findAll({
-    where: {
-      'topicId': topic
-    },
-    group: ['sourceId']
-  }).then((articles) => {
-    return articles;
-  })
+  return schema.models.source.all({
+    include: [
+      {
+        model: schema.models.article,
+        where: {
+          'topic;Id': topic,
+        }
+      }
+    ]
+  }).then((results) => {
+    return results;
+  });
 };
 
 exports.topicName = (topicId) => {
