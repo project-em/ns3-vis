@@ -1,0 +1,20 @@
+<div class="source-directive row">
+    <uib-accordion>
+        <div uib-accordion-group class="panel-default">
+            <uib-accordion-heading>
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="{{source.logo}}" width="75" height="75"/>
+                    </div>
+                    <div class="col-md-8" style="line-height: 75px; height: 75px;">
+                        <h4 ng-bind="source.name" style="display: inline-block; vertical-align: middle">
+                    </div>
+                    <div class="col-md-2" style="line-height: 75px; height: 75px;">
+                        <a href="{{source.url}}" target="_blank" style="display: inline-block; vertical-align: middle">GO</a>
+                    </div>
+                </div>
+            </uib-accordion-heading>
+            <article ng-repeat="article in source.articles" article="article"></article>
+        </div>
+    </uib-accordion>
+</div>

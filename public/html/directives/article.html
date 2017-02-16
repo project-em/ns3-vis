@@ -1,0 +1,14 @@
+<div class="article-directive row" style="border: 1px solid #c1c1c1; margin: 5px">
+    <div class="col-md-8">
+        <div>
+            <h4 ng-bind="article.name">
+        </div>
+        <div ng-bind="article.body"></div>
+    </div>
+    <div class="col-md-4">
+        <canvas id="article-bar" class="chart chart-horizontal-bar"
+            chart-data="ctrl.barData"
+            chart-labels="ctrl.barLabels">
+        </canvas>
+    </div>
+</div>

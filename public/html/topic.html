@@ -1,11 +1,19 @@
 <div>
     <div class="row">
         <div class="col-md-12">
-            <!--<canvas id="topic-bar" class="chart chart-horizontal-bar"
-                chart-data="source.bias for source in ctrl.data"
-                chart-labels="source.name for source in ctrl.data"
+            <canvas id="topic-bar" class="chart chart-horizontal-bar"
+                chart-data="ctrl.chart.biases"
+                chart-labels="ctrl.chart.labels"
                 chart-options="ctrl.chartConfig">
-            </canvas>-->
+            </canvas>
+        </div>
+    </div>
+
+    <hr />
+    
+    <div class="row">
+        <div class="col-md-12">
+            <source ng-repeat="source in ctrl.data" source="source"></source>
         </div>
     </div>
 </div>
