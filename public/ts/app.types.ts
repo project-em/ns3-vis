@@ -8,12 +8,18 @@ namespace ns3.main.types {
         name: string;
     }
 
+    export interface Sentence extends Data {
+        content: string;
+        bias: number;
+    };
+
     export interface Article extends Data {
         name: string;
         url: string;
         body: string;
         topic: Topic;
         bias?: number;
+        sentences?: Sentence[];
     }
 
     export interface Source extends Data {

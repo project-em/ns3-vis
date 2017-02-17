@@ -27,6 +27,16 @@ module.exports = function(grunt) {
                 dest: 'public/ts/bundle/app.js'
             }
         },
+        less: {
+		    default: {
+				options: {
+					// paths: ['Content/']
+				},
+				files: {
+					'public/stylesheets/site.css': 'public/less/app.less'
+				}
+			}
+		},
         uglify: {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
@@ -35,12 +45,23 @@ module.exports = function(grunt) {
             build: {
                 src: 'public/ts/bundle/app.js',
                 dest: 'public/ts/bundle/app.min.js'
+            },
+            css: {
+                src: 'public/stylesheets/site.css',
+                dest: 'public/stylesheets/site.min.css'
             }
         },
         watch: {
             js: {
                 files: ['public/**/*.ts'],
                 tasks: ['ts', 'concat', 'uglify'],
+                options: {
+                    livereload: true
+                }
+            },
+            less: {
+                files: ['Content/**/*.less'],
+                tasks: ['less'],
                 options: {
                     livereload: true
                 }
@@ -53,9 +74,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-express-server');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
     // Default task(s).
-    grunt.registerTask('default', ['ts', 'concat', 'uglify']);
+    grunt.registerTask('default', ['ts', 'less', 'concat', 'uglify']);
 
 };

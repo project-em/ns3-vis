@@ -22,6 +22,12 @@ models.source = exports.db.define('source', {
     },
     logo: {
         type: Sequelize.STRING,
+    },
+    primaryColor: {
+        type: Sequelize.STRING,
+    },
+    secondaryColor: {
+        type: Sequelize.STRING
     }
 }, { freezeTableName: true });
 
@@ -65,4 +71,4 @@ models.article.belongsTo(models.topic);
 models.article.belongsTo(models.source);
 models.sentence.belongsTo(models.article);
 
-exports.db.sync({force: false});
+exports.db.sync({force: true});
