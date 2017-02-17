@@ -249,7 +249,9 @@ function divClassTagFromSource(source) {
       return '.story-body-text.story-content';
     else if (source === "guardian") 
       return '.content__article-body.from-content-api.js-article__body p';
-    
+    else if (source == "thehill") {
+      return ".field-item.even > p";
+    }
 }
 
 function createArticleJSObjects(data, bodies, sentences, source) {
