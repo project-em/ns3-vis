@@ -36,7 +36,8 @@
     "simple-get": "2.4.0",
     "swagger-node-express": "^2.1.3",
     "typescript": "^2.0.9",
-    "typings": "^2.0.0"
+    "typings": "^2.0.0",
+    "webhose-nodejs": "^0.1.4"
   },
   "repository": {
     "type": "git",

@@ -15,10 +15,12 @@ models.source = exports.db.define('source', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: 'souceIndex'
     },
     url: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: 'souceIndex'
     },
     logo: {
         type: Sequelize.STRING,
@@ -50,6 +52,7 @@ models.article = exports.db.define('article', {
     url: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true
     },
 }, { freezeTableName: true });
 
@@ -70,5 +73,3 @@ models.article.hasMany(models.sentence);
 models.article.belongsTo(models.topic);
 models.article.belongsTo(models.source);
 models.sentence.belongsTo(models.article);
-
-exports.db.sync({force: true});
