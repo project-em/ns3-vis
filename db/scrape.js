@@ -6,7 +6,7 @@ const jsdom = require("jsdom");
 const guardian = require('guardian-js');
 const Promise = require('bluebird');
 const request = require('request');
-
+const logos = require("../logos.json");
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 var guardApi = new guardian(GUAR_KEY, false);
@@ -15,8 +15,8 @@ var exports = module.exports = {};
 
 exports.crawl = (topic) => {
   store.newTopic(topic).then((TopicDBObj) => {
-    store.newSource("New York Times", getSourceURLFromSourceName("New York Times")).then(function(NYTSourceObj){
-      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian")).then(function(GUARSourceObj){
+    store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"]).then(function(NYTSourceObj){
+      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"]).then(function(GUARSourceObj){
 
         getNYTArticles(topic).then(function(NYT_data){
           getGuardianArticles(topic).then(function(GUAR_data){
@@ -59,8 +59,8 @@ exports.crawl = (topic) => {
 
 exports.crawlWebhose = () => {
   var promises = [
-    scrapeWebhose({ name: "CNN", url: "cnn.com", logo: "logos/cnn.png"}, "wind power"),
-    scrapeWebhose({ name: "The Hill", url: "thehill.com", logo: "logos/thehill.jpg"}, "wind power"),
+    scrapeWebhose({ name: "CNN", url: "cnn.com", logo: logos["CNN"]}, "wind power"),
+    scrapeWebhose({ name: "The Hill", url: "thehill.com", logo: logos["The Hill"]}, "wind power"),
   ];
   return Promise.all(promises);
 }
