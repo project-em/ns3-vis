@@ -7,8 +7,8 @@ const guardian = require('guardian-js');
 const Promise = require('bluebird');
 const request = require('request');
 
-var NYT_KEY = process.env["NYT_KEY"];
-var GUAR_KEY = process.env["GUAR_KEY"];
+const NYT_KEY = process.env["NYT_KEY"];
+const GUAR_KEY = process.env["GUAR_KEY"];
 var guardApi = new guardian(GUAR_KEY, false);
 
 var exports = module.exports = {};
@@ -68,19 +68,19 @@ exports.crawlWebhose = () => {
 function scrapeWebhose(source, topic) {
     store.newTopic(topic).then((topic_obj) => {
         store.newSource(source.name, source.url, source.logo).then((source_obj) => {
-          getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
-              articles.forEach((article) => {
-                  store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
-                      article.sentences.forEach((sentence) => {
-                          store.newSentence(article_obj, sentence).then(() => { return; }, (reason) => { return reason; });
-                      });
-                  }, (article_failure) => {
-                    throw article_failure;
-                  });
-              });
-          }, (webhose_failure) => {
-            throw webhose_failure;
-          });
+            getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
+                articles.forEach((article) => {
+                    store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
+                        article.sentences.forEach((sentence) => {
+                            store.newSentence(article_obj, sentence);
+                        });
+                    }, (article_failure) => {
+                        throw article_failure;
+                    });
+                });
+            }, (webhose_failure) => {
+              throw webhose_failure;
+            });
         }, (source_failure) => {
           throw source_failure;
         });
@@ -180,8 +180,6 @@ function getGuardianArticles(topic) {
 function pullBodyFromURLSet(articles_data, source) {
     var bodyList = [];
     var totallength = articles_data.length;
-    console.log("INPULL URL SET");
-    console.log("DATA LENGTH: " + articles_data.length);
     var urlPullPromises = articles_data.map(
       function(x) { return pullBodyOfURL(x, source); }
     );
