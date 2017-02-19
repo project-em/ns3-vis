@@ -91,12 +91,12 @@ function scrapeWebhose(source, topic) {
 
 function getWebhoseArticles(source, topic) {
     var search = Promise.promisify(webhose.search, { context: webhose });
-    console.log('Querying WebHose for', topic, 'on', source);
     return search(topic, { site: source, format: webhose.enums.format.json }).then((result, err) => {
         if (err) throw err;
         // webhose is literally garbage so result.data is a string instead of json
         // even if you pass json as the format.
         // nice job idiots
+        // console.log('Querying WebHose for', topic, 'on', source);
         var json = JSON.parse(result.data).posts;
         var results = json.map((value) => {
             return pullBodyOfURL(value, source).then((body) => {
@@ -126,7 +126,9 @@ function getNYTArticles(topic) {
    
 
    return searchNYT(topic).then(function(response) {
-
+     if (response.statusCode != 200) {
+       return NYT_data;
+     }
      var docs = JSON.parse(response.body.toString()).response.docs;
 
           docs.forEach(function(value, index) {
@@ -139,6 +141,8 @@ function getNYTArticles(topic) {
           });
 
           return NYT_data;
+   }, (error) => {
+     console.log(error);
    });
    
 }
@@ -172,6 +176,8 @@ function getGuardianArticles(topic) {
           });
 
           return GUAR_data;
+     }, (error) => {
+       console.log(error);
      });
 
 

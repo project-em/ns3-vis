@@ -28,6 +28,7 @@
     "guardian-js": "1.0.7",
     "jsdom": "9.11.0",
     "minimist": "^1.2.0",
+    "node-schedule": "^1.2.0",
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
     "q": "1.4.1",

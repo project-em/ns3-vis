@@ -3,10 +3,14 @@
 var exports = module.exports = {};
 const express = require('express');
 const body_parser = require('body-parser');
+const schedule = require('node-schedule');
+const Promise = require('bluebird');
 const schema = require('./db/schema.js');
 const queries = require('./db/queries.js');
 const store = require('./db/store.js');
 const scrape = require('./db/scrape.js');
+const topics = require('./topics.json');
+
 const app = express();
 
 /* CONFIG */
@@ -60,14 +64,7 @@ app.post('/api/source', (request, response) => {
 
 app.post('/api/scrape', (request, response) => {
   console.log("Beginning scrape at " + new Date());
-  scrape.crawl("wind power");
-  response.sendStatus(200);
-});
-
-app.post('/api/scrape/webhose', (request, response) => {
-  console.log("Beginning scrape at " + new Date());
-  scrape.crawlWebhose("wind power");
-  response.sendStatus(200);
+  crawlAll().then(() => {response.sendStatus(200)});
 });
 
 /* CONFIG */
@@ -83,5 +80,15 @@ schema.db.sync({force: true}).then((result) => {
   });
 });
 
+/* SCHEDULED TASKS */
 
-/* HELPER FUNCTIONS */
+function crawlAll() {
+    var promises = []
+    topics.forEach((topic) => {
+        promises.push(scrape.crawl(topic));
+        promises.push(scrape.crawlWebhose(topic));
+    });
+    return Promise.all(promises);
+}
+
+var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
