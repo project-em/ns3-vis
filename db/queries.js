@@ -8,8 +8,9 @@ exports.articlesFor = (topic) => {
       {
         model: schema.models.article,
         where: {
-          'topic;Id': topic,
-        }
+          'topicId': topic,
+        },
+        limit: 5
       }
     ]
   }).then((results) => {

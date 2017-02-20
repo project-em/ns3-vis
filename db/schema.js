@@ -15,12 +15,12 @@ models.source = exports.db.define('source', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: 'souceIndex'
+        unique: 'sourceIndex'
     },
     url: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: 'souceIndex'
+        unique: 'sourceIndex'
     },
     logo: {
         type: Sequelize.STRING,
@@ -33,7 +33,7 @@ models.source = exports.db.define('source', {
     }
 }, { freezeTableName: true });
 
-models.topic = exports.db.define('topic;', {
+models.topic = exports.db.define('topic', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -44,7 +44,8 @@ models.topic = exports.db.define('topic;', {
 models.article = exports.db.define('article', {
     name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: 'articleIndex'
     },
     body: {
         type: Sequelize.TEXT,
@@ -52,7 +53,7 @@ models.article = exports.db.define('article', {
     url: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: 'articleIndex'
     },
 }, { freezeTableName: true });
 

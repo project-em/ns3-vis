@@ -57,10 +57,10 @@ exports.crawl = (topic) => {
   });  
 }
 
-exports.crawlWebhose = () => {
+exports.crawlWebhose = (topic) => {
   var promises = [
-    scrapeWebhose({ name: "CNN", url: "cnn.com", logo: logos["CNN"]}, "wind power"),
-    scrapeWebhose({ name: "The Hill", url: "thehill.com", logo: logos["The Hill"]}, "wind power"),
+    scrapeWebhose({ name: "CNN", url: "cnn.com", logo: logos["CNN"]}, topic),
+    scrapeWebhose({ name: "The Hill", url: "thehill.com", logo: logos["The Hill"]}, topic),
   ];
   return Promise.all(promises);
 }
@@ -118,33 +118,35 @@ function getWebhoseArticles(source, topic) {
 };
 
 function getNYTArticles(topic) {
-   var urlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-   urlString = urlString + "?q=" + topic.replace(' ', '+') + "&fq=document_type:(\"article\")" + "&api-key=" + NYT_KEY + "&response-format=jsonp" + "&callback=svc_search_v2_articlesearch";
+    var urlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    urlString = urlString + "?q=" + topic.replace(' ', '+') + "&fq=document_type:(\"article\")" + "&api-key=" + NYT_KEY + "&response-format=jsonp" + "&callback=svc_search_v2_articlesearch";
 
-   
-   var NYT_data = [];
-   
 
-   return searchNYT(topic).then(function(response) {
-     if (response.statusCode != 200) {
-       return NYT_data;
-     }
-     var docs = JSON.parse(response.body.toString()).response.docs;
+    var NYT_data = [];
 
-          docs.forEach(function(value, index) {
+
+    return searchNYT(topic).then(function(response) {
+        if (response.statusCode == 429) {
+            console.log("Retrying NYT in 1s.");
+            return Promise.delay(1000, () => {
+            }).then(() => {
+                return searchNYT(topic);
+            });
+        }
+        var docs = JSON.parse(response.body.toString()).response.docs;
+
+        docs.forEach(function(value, index) {
             var article_data = {
-              url: value["web_url"],
-              headline: value.headline.main
+                url: value["web_url"],
+                headline: value.headline.main
             }
-
             NYT_data.push(article_data);
-          });
+        });
 
-          return NYT_data;
-   }, (error) => {
-     console.log(error);
-   });
-   
+        return NYT_data;
+    }, (error) => {
+      console.log(error);
+    });
 }
 
 function searchNYT(topic) {
@@ -233,6 +235,8 @@ function divClassTagFromSource(source) {
       return '.content__article-body.from-content-api.js-article__body p';
     else if (source.toLowerCase() == 'thehill.com') {
       return ".field-item.even > p";
+    } else if (source.toLowerCase() == 'cnn.com') {
+      return '.zn-body__paragraph';
     }
 }
 

@@ -51,7 +51,7 @@ exports.newArticle = (articleObj, topicId, sourceId) => {
             name: articleObj.headline,
             body: articleObj.body,
             url: articleObj.url,
-            "topic;Id": topicId,
+            topicId: topicId,
             sourceId: sourceId
         }).then(() => {
             return schema.models.article.findOne({
