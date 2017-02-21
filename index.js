@@ -74,12 +74,6 @@ app.use((req, res) => {
   res.render('pages/index');
 });
 
-schema.db.sync({force: true}).then((result) => {
-  app.listen(app.get('port'), function() {
-    console.log('DB synced and Node app is running on port', app.get('port'));
-  });
-});
-
 /* SCHEDULED TASKS */
 
 function crawlAll() {
@@ -92,3 +86,9 @@ function crawlAll() {
 }
 
 var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+
+schema.db.sync({force: false}).then((result) => {
+  app.listen(app.get('port'), function() {
+    console.log('DB synced and Node app is running on port', app.get('port'));
+  });
+});

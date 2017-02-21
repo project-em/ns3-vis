@@ -20,7 +20,7 @@ exports.newTopic = (name) => {
     }
 }
 
-exports.newSource = (name, url, logo) => {
+exports.newSource = (name, url, logo, primaryColor, secondaryColor) => {
     if (!name || !url) {
         console.log("error in creating source");
         throw "incomplete data";
@@ -28,7 +28,9 @@ exports.newSource = (name, url, logo) => {
         return schema.models.source.upsert({
                 name: name,
                 url: url,
-                logo: logo
+                logo: logo,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor
             }
         ).then(() => {
             return schema.models.source.findOne({

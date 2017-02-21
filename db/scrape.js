@@ -15,8 +15,8 @@ var exports = module.exports = {};
 
 exports.crawl = (topic) => {
   store.newTopic(topic).then((TopicDBObj) => {
-    store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"]).then(function(NYTSourceObj){
-      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"]).then(function(GUARSourceObj){
+    store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"], '#000000', '#FFFFFF').then(function(NYTSourceObj){
+      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"], '#004a83', '#FFFFFF').then(function(GUARSourceObj){
 
         getNYTArticles(topic).then(function(NYT_data){
           getGuardianArticles(topic).then(function(GUAR_data){
@@ -59,15 +59,27 @@ exports.crawl = (topic) => {
 
 exports.crawlWebhose = (topic) => {
   var promises = [
-    scrapeWebhose({ name: "CNN", url: "cnn.com", logo: logos["CNN"]}, topic),
-    scrapeWebhose({ name: "The Hill", url: "thehill.com", logo: logos["The Hill"]}, topic),
+    scrapeWebhose({
+      name: "CNN",
+      url: "cnn.com",
+      logo: logos["CNN"],
+      primaryColor: '#cc1417',
+      secondaryColor: '#FFFFFF'
+    }, topic),
+    scrapeWebhose({
+      name: "The Hill",
+      url: "thehill.com",
+      logo: logos["The Hill"],
+      primaryColor: '#0b4a9a',
+      secondaryColor: '#FFFFFF'
+    }, topic),
   ];
   return Promise.all(promises);
 }
 
 function scrapeWebhose(source, topic) {
     store.newTopic(topic).then((topic_obj) => {
-        store.newSource(source.name, source.url, source.logo).then((source_obj) => {
+        store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
             getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
                 articles.forEach((article) => {
                     store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
