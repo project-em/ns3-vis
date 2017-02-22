@@ -45,10 +45,6 @@ module.exports = function(grunt) {
             build: {
                 src: 'public/ts/bundle/app.js',
                 dest: 'public/ts/bundle/app.min.js'
-            },
-            css: {
-                src: 'public/stylesheets/site.css',
-                dest: 'public/stylesheets/site.min.css'
             }
         },
         watch: {
