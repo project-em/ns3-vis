@@ -7,13 +7,31 @@ namespace ns3.main.directives {
     export class SourceDirectiveController {
 
         constructor(private $state: ng.ui.IStateService, 
-                    private $scope: SourceDirectiveScope) {
+                    private $scope: SourceDirectiveScope,
+                    private $window: ng.IWindowService) {
         }
 
-        // handle deep linking later
-        // public go = () => {
-        //     this.$tate.go('main.topic', { id : this.$scope.source.id });
-        // }
+        private hexToRgb = (hex) => {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        private getBackground = (alpha) => {top
+            let rgbs = this.hexToRgb(this.$scope.source.primaryColor);
+            return 'rgba(' + rgbs.r + ', ' + rgbs.g + ', ' + rgbs.b + ', ' + alpha + ')';
+        }
+
+        public go = () => {
+            if (this.$scope.source.url.indexOf('http://') == -1 && this.$scope.source.url.indexOf('https://') == -1) {
+                this.$scope.source.url = 'http://' + this.$scope.source.url;
+            }
+            console.log(this.$scope.source.url);
+            this.$window.open(this.$scope.source.url);
+        }
     }
 
     export class SourceDirective {

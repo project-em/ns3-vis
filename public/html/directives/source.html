@@ -1,8 +1,8 @@
 <div class="source-directive row">
     <uib-accordion>
-        <div uib-accordion-group class="panel-default">
+        <div uib-accordion-group class="panel-default" style="background-color: {{ ctrl.getBackground('0.7') }}; color: {{ source.secondaryColor }};">
             <uib-accordion-heading>
-                <div class="row">
+                <div class="row" style="background-color: {{ ctrl.getBackground('1') }}; color: {{ source.secondaryColor }};">
                     <div class="col-md-2">
                         <img src="{{source.logo}}" width="75" height="75"/>
                     </div>
@@ -10,7 +10,7 @@
                         <h4 ng-bind="source.name" style="display: inline-block; vertical-align: middle">
                     </div>
                     <div class="col-md-2" style="line-height: 75px; height: 75px;">
-                        <button class="btn btn-primary" href="{{source.url}}" target="_blank" style="display: inline-block; vertical-align: middle">GO</button>
+                        <button class="btn btn-primary pull-right" ng-click="ctrl.go(); $event.stopPropagation();">GO</button>
                     </div>
                 </div>
             </uib-accordion-heading>

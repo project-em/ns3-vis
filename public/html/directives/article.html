@@ -1,13 +1,9 @@
-<div class="article-directive row" style="border: 1px solid #c1c1c1; margin: 5px">
+<div class="article-directive row">
     <div class="col-md-8">
         <div>
             <h4 ng-bind="article.name">
         </div>
-        <div ng-bind="article.body"
-            style="overflow: hidden;
-                display: -webkit-box;
-                -webkit-line-clamp: 5;
-                -webkit-box-orient: vertical; "></div>
+        <div class="body" ng-bind="article.body"></div>
     </div>
     <div class="col-md-4">
         <canvas id="article-bar" class="chart chart-horizontal-bar"

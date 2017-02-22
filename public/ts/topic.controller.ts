@@ -2,7 +2,10 @@ namespace ns3.main {
 
     export class TopicController {
 
-        chart: any;
+        chart = {
+            labels: [],
+            biases: []
+        }
         barOptions = {
             scales: {
                 xAxes:  [{
@@ -15,7 +18,11 @@ namespace ns3.main {
             }
         };
         constructor(private data: types.Source[],
-            private $stateParams: ng.ui.IStateParamsService) {     
+            private $stateParams: ng.ui.IStateParamsService) {
+            this.data.forEach((obj) => {
+                this.chart.labels.push(obj.name);
+                this.chart.biases.push(obj.bias);
+            });
             if ($stateParams['id'] == -1) {
                 this.chart = {
                     biases: [4, -2],
@@ -76,6 +83,7 @@ namespace ns3.main {
                     }
                 ]
             }
+
         }
         
         private chartConfig = {

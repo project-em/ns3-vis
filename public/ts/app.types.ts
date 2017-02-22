@@ -28,6 +28,8 @@ namespace ns3.main.types {
         url: string;
         articles?: Article[];
         bias?: number;
+        primaryColor?: string;
+        secondaryColor?: string;
     }
 
 }

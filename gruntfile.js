@@ -54,13 +54,13 @@ module.exports = function(grunt) {
         watch: {
             js: {
                 files: ['public/**/*.ts'],
-                tasks: ['ts', 'concat', 'uglify'],
+                tasks: ['ts', 'concat', 'uglify:build'],
                 options: {
                     livereload: true
                 }
             },
             less: {
-                files: ['Content/**/*.less'],
+                files: ['public/**/*.less'],
                 tasks: ['less'],
                 options: {
                     livereload: true

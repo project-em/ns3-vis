@@ -50,6 +50,10 @@ models.article = exports.db.define('article', {
     body: {
         type: Sequelize.TEXT,
     },
+    bias: {
+        type: Sequelize.FLOAT,
+        allowNull: true
+    },
     url: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -63,7 +67,7 @@ models.sentence = exports.db.define('sentence', {
         allowNull: false,
     },
     bias: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.FLOAT,
         allowNull: false,
     }
 }, { freezeTableName: true });

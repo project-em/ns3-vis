@@ -1,0 +1,44 @@
+@import "../pallette.less";
+
+@hover-transition: .2s;
+
+.source-directive {
+    .panel-default {
+        border-color: @accent;
+    }
+
+    .panel-body {
+        border-color: @accent !important;
+    }
+
+    .panel-heading {
+        background-color: inherit;
+        border-color: @accent;
+    }
+
+    .btn.btn-primary {
+        height: 100%;
+        background-color: transparent;
+        border: 0px;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    .btn.btn-primary:active {
+        border: 0;
+    }
+
+    .btn.btn-primary:focus {
+        border: 0;
+    }
+    
+    .btn.btn-primary:hover {
+        background-color: white;
+        color: black;
+        -o-transition: @hover-transition;
+        -ms-transition: @hover-transition;
+        -moz-transition: @hover-transition;
+        -webkit-transition: @hover-transition;
+        transition: @hover-transition;
+    }
+}

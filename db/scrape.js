@@ -83,8 +83,12 @@ function scrapeWebhose(source, topic) {
             getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
                 articles.forEach((article) => {
                     store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
+                        var promises = [];
                         article.sentences.forEach((sentence) => {
-                            store.newSentence(article_obj, sentence);
+                            promises.push(store.newSentence(article_obj, sentence));
+                        });
+                        Promise.all(promises).then(() => {
+                          store.computeArticleBias(article_obj.id).then(() => {});
                         });
                     }, (article_failure) => {
                         throw article_failure;
@@ -140,10 +144,7 @@ function getNYTArticles(topic) {
     return searchNYT(topic).then(function(response) {
         if (response.statusCode == 429) {
             console.log("Retrying NYT in 1s.");
-            return Promise.delay(1000, () => {
-            }).then(() => {
-                return searchNYT(topic);
-            });
+            return [];
         }
         var docs = JSON.parse(response.body.toString()).response.docs;
 

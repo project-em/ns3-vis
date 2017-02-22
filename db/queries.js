@@ -9,11 +9,17 @@ exports.articlesFor = (topic) => {
         model: schema.models.article,
         where: {
           'topicId': topic,
-        },
-        limit: 5
+        }
       }
-    ]
+    ],
+    attributes: {
+      include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
+    },
+    group: ['source.id', 'articles.id'],
   }).then((results) => {
+    results.forEach((result) => {
+      result.articles.length = 5; // cap at 5 articles, should use SQL limit btu complicated to preserve avg
+    });
     return results;
   });
 };

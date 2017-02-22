@@ -65,6 +65,32 @@ exports.newArticle = (articleObj, topicId, sourceId) => {
     }
 }
 
+exports.computeArticleBias = (articleId) => {
+    if (!articleId) {
+        throw "no ID provided";
+    } else {
+        return schema.models.article.find({
+            where: {
+                id: articleId
+            },
+            include: [
+                {
+                    model: schema.models.sentence,
+                }
+            ],
+            attributes: {
+                include: [[schema.db.fn('AVG', schema.db.col('sentences.bias')), 'bias']]
+            },
+            group: ['article.id', 'sentences.id']
+        }).then((articleAvg) => {
+            return schema.models.article.findById(articleAvg.id).then((articleObj) => {
+                articleObj.bias = articleAvg.bias;
+                return articleObj.save().then(() => {});
+            });
+        });
+    }
+}
+
 exports.newSentence = (articleObj, sentence) => {
     if (!articleObj) {
         console.log("error in creating sentence");
