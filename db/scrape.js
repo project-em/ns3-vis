@@ -1,6 +1,6 @@
 const schema = require('./schema.js');
 const store = require('./store.js');
-const webhose = require('webhose-nodejs');
+const webhose = require('./webhoseio.js');
 const get = require('simple-get');
 const jsdom = require("jsdom");
 const guardian = require('guardian-js');
@@ -10,48 +10,53 @@ const logos = require("../logos.json");
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 var guardApi = new guardian(GUAR_KEY, false);
+const webhoseApi = webhose.config({token: process.env["WEBHOSE_TOKEN"]});
 
 var exports = module.exports = {};
 
 exports.crawl = (topic) => {
-  store.newTopic(topic).then((TopicDBObj) => {
-    store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"], '#000000', '#FFFFFF').then(function(NYTSourceObj){
-      store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"], '#004a83', '#FFFFFF').then(function(GUARSourceObj){
+  console.log('TOPIC: ' + topic);
+  return store.newTopic(topic).then((TopicDBObj) => {
+    return store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"], '#000000', '#FFFFFF').then(function(NYTSourceObj){
+      return store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"], '#004a83', '#FFFFFF').then(function(GUARSourceObj){
 
-        getNYTArticles(topic).then(function(NYT_data){
-          getGuardianArticles(topic).then(function(GUAR_data){
-          pullBodyFromURLSet(NYT_data, "new york times").then(function(NYT_bodies) {
+        return Promise.all([
+          getGuardianArticles(topic).then(function(GUAR_data) {
             pullBodyFromURLSet(GUAR_data, "guardian").then(function(GUAR_bodies) {
-
-              var NYT_sentences = pullSentencesFromBodies(NYT_bodies);
               var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
-                
-              var NYT_objs = createArticleJSObjects(NYT_data, NYT_bodies, NYT_sentences, "New York Times");
               var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, GUAR_sentences, "The Guardian");
-
-              var allObjs = NYT_objs.concat(GUAR_objs);
-              allObjs.forEach(function(value, index) {
-                  var source = value.source;
-                  var sourceId = "";
-                  if (source === "New York Times") {
-                    sourceId = NYTSourceObj.id;
-                  } else if (source === "The Guardian") {
-                    sourceId = GUARSourceObj.id;
-                  }
-
-                  store.newArticle(value, TopicDBObj.id, sourceId).then(function(ArticleDBObj) {
-                    value.sentences.forEach(function(sentence, index) {
-                      store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
-                      });
+              GUAR_objs.forEach((value, index) => {
+                store.newArticle(value, TopicDBObj.id, GUARSourceObj.id).then(function(ArticleDBObj) {
+                  value.sentences.forEach(function(sentence, index) {
+                    store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
                     });
-                  })
+                  });
                 });
-              })
-            }).catch(function(error) {
-                console.log("error in pulling bodies", error);
+              });
+              console.log("Successfully pulled from The Guardian for topic:", topic);
             });
-          });
-        });
+          }).catch(function(error) {
+            console.log("error in pulling from the guardian", error);
+          }),
+
+          getNYTArticles(topic).then(function(NYT_data) {
+            pullBodyFromURLSet(NYT_data, "new york times").then(function(GUAR_bodies) {
+              var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
+              var GUAR_objs = createArticleJSObjects(NYT_data, GUAR_bodies, GUAR_sentences, "The New York Times");
+              GUAR_objs.forEach((value, index) => {
+                store.newArticle(value, TopicDBObj.id, NYTSourceObj.id).then(function(ArticleDBObj) {
+                  value.sentences.forEach(function(sentence, index) {
+                    store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
+                    });
+                  });
+                });
+              });
+              console.log("Successfully pulled from The New York Times for topic:", topic);
+            });
+          }).catch(function(error) {
+            console.log("error in pulling from the new york times", error);
+          })
+        ]);
       });
     });
   });  
@@ -73,6 +78,13 @@ exports.crawlWebhose = (topic) => {
       primaryColor: '#0b4a9a',
       secondaryColor: '#FFFFFF'
     }, topic),
+    scrapeWebhose({
+      name: "Fox News",
+      url: "foxnews.com",
+      logo: logos["Fox News"],
+      primaryColor: '#183A53',
+      secondaryColor: '#FFFFFF'
+    }, topic)
   ];
   return Promise.all(promises);
 }
@@ -106,17 +118,17 @@ function scrapeWebhose(source, topic) {
 }
 
 function getWebhoseArticles(source, topic) {
-    var search = Promise.promisify(webhose.search, { context: webhose });
-    return search(topic, { site: source, format: webhose.enums.format.json }).then((result, err) => {
-        if (err) throw err;
+    return webhoseApi.query('filterWebData', {q: "thread.title:(" + topic + ") site:" + source }).then((result) => {
         // webhose is literally garbage so result.data is a string instead of json
         // even if you pass json as the format.
         // nice job idiots
-        // console.log('Querying WebHose for', topic, 'on', source);
-        var json = JSON.parse(result.data).posts;
-        var results = json.map((value) => {
+        console.log('Querying WebHose for', topic, 'on', source);
+        var results = result.posts.map((value) => {
             return pullBodyOfURL(value, source).then((body) => {
                 var sentences = pullSentencesFromBody(body);
+                if (sentences == null) {
+                  sentences = [];
+                }
                 var returned =  {
                     url: value.url,
                     body: body,
@@ -131,7 +143,7 @@ function getWebhoseArticles(source, topic) {
         });
         return Promise.all(results);
     });
-};
+};  
 
 function getNYTArticles(topic) {
     var urlString = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -178,19 +190,19 @@ function getGuardianArticles(topic) {
 
     var GUAR_data = [];
 
-    return guardApi.content.search(topic, header).then(function(response){
-          var docs = JSON.parse(response.body.toString()).response.results;
+    return guardApi.content.search(topic, header).then(function(response){ 
+        var docs = JSON.parse(response.body.toString()).response.results;
 
-          docs.forEach(function(value, index) {
-            var article_data = {
-              url: value["webUrl"],
-              headline: value["webTitle"]
-            }
+        docs.forEach(function(value, index) {
+          var article_data = {
+            url: value["webUrl"],
+            headline: value["webTitle"]
+          }
 
-            GUAR_data.push(article_data);
-          });
+          GUAR_data.push(article_data);
+        });
 
-          return GUAR_data;
+        return GUAR_data;
      }, (error) => {
        console.log(error);
      });
@@ -219,8 +231,7 @@ function pullBodyOfURL(article_data, source) {
         done: function (err, window) {
             var $ = window.$;
             var bodyStrings = [];
-            var storyblocks = $(divClassTagFromSource(source));
-            console.log("found", storyblocks.length, "at", article_data.url);
+            var storyblocks = $(divClassTagFromSource(source, article_data.url));
             storyblocks.each(function(idx, val) {
                 bodyStrings.push($(val).text());
             });
@@ -228,6 +239,7 @@ function pullBodyOfURL(article_data, source) {
             var storyText = bodyStrings.join(" ");
             
             try {
+              console.log("found", storyblocks.length, "at", article_data.url);
               resolve(storyText);
             } catch (ex) {
               console.log("error in pullBodyOfURL")
@@ -241,15 +253,21 @@ function pullBodyOfURL(article_data, source) {
 
 }
 
-function divClassTagFromSource(source) {
+function divClassTagFromSource(source, url) {
     if (source.toLowerCase() === "new york times") 
-      return '.story-body-text.story-content';
+      if (url.includes("query.nytimes")) {
+        return '.articleBody p';
+      } else {
+        return '.story-body-text.story-content';
+      }
     else if (source.toLowerCase() === "guardian") 
       return '.content__article-body.from-content-api.js-article__body p';
     else if (source.toLowerCase() == 'thehill.com') {
       return ".field-item.even > p";
     } else if (source.toLowerCase() == 'cnn.com') {
       return '.zn-body__paragraph';
+    } else if (source.toLowerCase() == 'foxnews.com') {
+      return 'div.article-text > p';
     }
 }
 
@@ -284,7 +302,7 @@ function getSourceURLFromSourceName(sourceName) {
 }
 
 function pullSentencesFromBody(body) {
-    return body.split("(\.\w[A-Z])");
+    return body.match( /[^\.!\?]+[\.!\?]+/g );
 }
 
 function pullSentencesFromBodies(bodies) {

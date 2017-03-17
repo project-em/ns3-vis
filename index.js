@@ -78,16 +78,19 @@ app.use((req, res) => {
 
 function crawlAll() {
     var promises = []
-    topics.forEach((topic) => {
+    test = ["obama"];
+    test.forEach((topic) => {
+        console.log(topic);
         promises.push(scrape.crawl(topic));
+        console.log("now crawling webhose");
         promises.push(scrape.crawlWebhose(topic));
     });
     return Promise.all(promises);
 }
 
-var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+// var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
 
-schema.db.sync({force: false}).then((result) => {
+schema.db.sync({force: true}).then((result) => {
   app.listen(app.get('port'), function() {
     console.log('DB synced and Node app is running on port', app.get('port'));
   });
