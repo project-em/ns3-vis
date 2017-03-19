@@ -6,7 +6,9 @@ const jsdom = require("jsdom");
 const guardian = require('guardian-js');
 const Promise = require('bluebird');
 const request = require('request');
+const XRegExp = require('xregexp');
 const logos = require("../logos.json");
+
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 var guardApi = new guardian(GUAR_KEY, false);
@@ -302,9 +304,8 @@ function getSourceURLFromSourceName(sourceName) {
 }
 
 function pullSentencesFromBody(body) {
-    return body.match( /\(?[^\.\?\!]+[\.!\?]\)?/g );
+    return XRegExp.match(body, /\(?[^\.\?\!]+[\.!\?]\)?/g );
 }
-
 function pullSentencesFromBodies(bodies) {
   return bodies.map(pullSentencesFromBody);
 }
