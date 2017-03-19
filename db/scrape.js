@@ -302,7 +302,7 @@ function getSourceURLFromSourceName(sourceName) {
 }
 
 function pullSentencesFromBody(body) {
-    return body.match( /[^\.!\?]+[\.!\?]+/g );
+    return body.match( /\(?[^\.\?\!]+[\.!\?]\)?/g );
 }
 
 function pullSentencesFromBodies(bodies) {
