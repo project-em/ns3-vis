@@ -112,8 +112,15 @@ exports.crawlWebhose = (topic) => {
       logo: logos["The Huffington Post"],
       primaryColor: '#2E7160',
       secondaryColor: '#FFFFFF'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Washington Post",
+      url: "washingtonpost.com",
+      logo: logos["The Washington Post"],
+      primaryColor: '#000000',
+      secondaryColor: '#FFFFFF'
     }, topic);
-    })})})})})});
+    })})})})})})});
 }
 
 function scrapeWebhose(source, topic) {
@@ -318,6 +325,8 @@ function divClassTagFromSource(source, url) {
       return '.blog-post__text p';
     } else if (source.toLowerCase() == 'huffingtonpost.com') {
       return '.content-list-component.text p';
+    } else if (source.toLowerCase() == "washingtonpost.com") {
+      return "article > p";
     }
 }
 

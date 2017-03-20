@@ -9,9 +9,10 @@ exports.articlesFor = (topic) => {
         model: schema.models.article,
         where: {
           'topicId': topic,
-        }
+        },
       }
     ],
+    order: ['source.name'],
     attributes: {
       include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
     },
