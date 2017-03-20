@@ -30,7 +30,7 @@ function getQuery(obj) {
 WebhoseioClient.prototype.query = function (endpoint, params) {
   var today = new Date()
   var priorDate = new Date().setDate(today.getDate()-30)
-  this.nextUri = 'https://webhose.io/' + endpoint + getQuery(Object.assign({}, this.options, params)) + "&ts=" + priorDate;
+  this.nextUri = 'https://webhose.io/' + endpoint + getQuery(Object.assign({}, this.options, params)) + "&is_first=true&ts=" + priorDate;
   return this.getNext();
 };
 
