@@ -27,7 +27,7 @@ exports.crawl = (topic) => {
               var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
               var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, GUAR_sentences, "The Guardian");
               GUAR_objs.forEach((value, index) => {
-                store.newArticle(value, TopicDBObj.id, GUARSourceObj.id).then(function(ArticleDBObj) {
+                store.newArticle(value, TopicDBObj.id, GUARSourceObj.id, false).then(function(ArticleDBObj) {
                   value.sentences.forEach(function(sentence, index) {
                     // store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
                     // });
@@ -45,7 +45,7 @@ exports.crawl = (topic) => {
               var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
               var GUAR_objs = createArticleJSObjects(NYT_data, GUAR_bodies, GUAR_sentences, "The New York Times");
               GUAR_objs.forEach((value, index) => {
-                store.newArticle(value, TopicDBObj.id, NYTSourceObj.id).then(function(ArticleDBObj) {
+                store.newArticle(value, TopicDBObj.id, NYTSourceObj.id, false).then(function(ArticleDBObj) {
                   value.sentences.forEach(function(sentence, index) {
                     // store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
                     // });
@@ -129,7 +129,7 @@ function scrapeWebhose(source, topic) {
         return store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
             return getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
                 articles.forEach((article) => {
-                    store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
+                    store.newArticle(article, topic_obj.id, source_obj.id, false).then((article_obj) => {
                         // var promises = [];
                         // article.sentences.forEach((sentence) => {
                         //     // promises.push(store.newSentence(article_obj, sentence));
