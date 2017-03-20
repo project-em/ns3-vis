@@ -38,6 +38,7 @@ WebhoseioClient.prototype.getNext = function () {
   return fetch(this.nextUri)
     .then(response => {
       if (response.status < 200 || response.status >= 300) {
+        console.log(response);
         throw new Error(response.statusText);
       }
       return response.json();

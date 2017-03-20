@@ -17,7 +17,6 @@ const webhoseApi = webhose.config({token: process.env["WEBHOSE_TOKEN"]});
 var exports = module.exports = {};
 
 exports.crawl = (topic) => {
-  console.log('TOPIC: ' + topic);
   return store.newTopic(topic).then((TopicDBObj) => {
     return store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"], '#000000', '#FFFFFF').then(function(NYTSourceObj){
       return store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"], '#004a83', '#FFFFFF').then(function(GUARSourceObj){
@@ -30,8 +29,8 @@ exports.crawl = (topic) => {
               GUAR_objs.forEach((value, index) => {
                 store.newArticle(value, TopicDBObj.id, GUARSourceObj.id).then(function(ArticleDBObj) {
                   value.sentences.forEach(function(sentence, index) {
-                    store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
-                    });
+                    // store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
+                    // });
                   });
                 });
               });
@@ -48,8 +47,8 @@ exports.crawl = (topic) => {
               GUAR_objs.forEach((value, index) => {
                 store.newArticle(value, TopicDBObj.id, NYTSourceObj.id).then(function(ArticleDBObj) {
                   value.sentences.forEach(function(sentence, index) {
-                    store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
-                    });
+                    // store.newSentence(ArticleDBObj, sentence).then(function(SentenceDBObj) {
+                    // });
                   });
                 });
               });
@@ -65,49 +64,77 @@ exports.crawl = (topic) => {
 }
 
 exports.crawlWebhose = (topic) => {
-  var promises = [
+    scrapeWebhose({
+      name: "The Atlantic",
+      url: "theatlantic.com",
+      logo: logos["The Atlantic"],
+      primaryColor: '#000000',
+      secondaryColor: '#FFFFFF'
+    }, topic).then(() => {
     scrapeWebhose({
       name: "CNN",
       url: "cnn.com",
       logo: logos["CNN"],
       primaryColor: '#cc1417',
       secondaryColor: '#FFFFFF'
-    }, topic),
+    }, topic).then(() => {
     scrapeWebhose({
       name: "The Hill",
       url: "thehill.com",
       logo: logos["The Hill"],
       primaryColor: '#0b4a9a',
       secondaryColor: '#FFFFFF'
-    }, topic),
+    }, topic).then(() => {
     scrapeWebhose({
       name: "Fox News",
       url: "foxnews.com",
       logo: logos["Fox News"],
       primaryColor: '#183A53',
       secondaryColor: '#FFFFFF'
-    }, topic)
-  ];
-  return Promise.all(promises);
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Fiscal Times",
+      url: "thefiscaltimes.com",
+      logo: logos["The Fiscal Times"],
+      primaryColor: '#D94331',
+      secondaryColor: '#FFFFFF'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Economist",
+      url: "economist.com",
+      logo: logos["The Economist"],
+      primaryColor: '#E3120B',
+      secondaryColor: '#FFFFFF'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Huffington Post",
+      url: "huffingtonpost.com",
+      logo: logos["The Huffington Post"],
+      primaryColor: '#2E7160',
+      secondaryColor: '#FFFFFF'
+    }, topic);
+    })})})})})});
 }
 
 function scrapeWebhose(source, topic) {
-    store.newTopic(topic).then((topic_obj) => {
-        store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
-            getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
+    console.log('Querying WebHose for', topic, 'on', source.name);
+    return store.newTopic(topic).then((topic_obj) => {
+        return store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
+            return getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
                 articles.forEach((article) => {
                     store.newArticle(article, topic_obj.id, source_obj.id).then((article_obj) => {
-                        var promises = [];
-                        article.sentences.forEach((sentence) => {
-                            promises.push(store.newSentence(article_obj, sentence));
-                        });
-                        Promise.all(promises).then(() => {
-                          store.computeArticleBias(article_obj.id).then(() => {});
-                        });
+                        // var promises = [];
+                        // article.sentences.forEach((sentence) => {
+                        //     // promises.push(store.newSentence(article_obj, sentence));
+                        // });
+                        // Promise.all(promises).then(() => {
+                        //   store.computeArticleBias(article_obj.id).then(() => {});
+                        // });
                     }, (article_failure) => {
                         throw article_failure;
                     });
                 });
+                console.log('Finished WebHose for', topic, 'on', source.name);
             }, (webhose_failure) => {
               throw webhose_failure;
             });
@@ -120,12 +147,25 @@ function scrapeWebhose(source, topic) {
 }
 
 function getWebhoseArticles(source, topic) {
-    return webhoseApi.query('filterWebData', {q: "thread.title:(" + topic + ") site:" + source }).then((result) => {
+    return webhoseApi.query('search', {q: "thread.title:(" + topic + ") site:" + source }).then((result) => {
         // webhose is literally garbage so result.data is a string instead of json
         // even if you pass json as the format.
         // nice job idiots
-        console.log('Querying WebHose for', topic, 'on', source);
-        var results = result.posts.map((value) => {
+        // dedup results first
+        var foundUrls = [];
+        if (!result.posts) {
+          console.log("Failed query for", topic, "on", source);
+          return [];
+        }
+        result.posts.forEach((article) => {
+          var hashIdx = article.url.lastIndexOf('#');
+          var url = article.url.substring(0, hashIdx == -1 ? article.url.length : hashIdx);
+          foundUrls[url] = article;
+        });
+
+        var keys = Object.keys(foundUrls);
+        var results = keys.map((key) => {
+            var value = foundUrls[key];
             return pullBodyOfURL(value, source).then((body) => {
                 var sentences = pullSentencesFromBody(body);
                 if (sentences == null) {
@@ -270,6 +310,14 @@ function divClassTagFromSource(source, url) {
       return '.zn-body__paragraph';
     } else if (source.toLowerCase() == 'foxnews.com') {
       return 'div.article-text > p';
+    } else if (source.toLowerCase() == "thefiscaltimes.com") {
+      return '';
+    } else if (source.toLowerCase() == "theatlantic.com") {
+      return '.article-body p';
+    } else if (source.toLowerCase() == "economist.com") {
+      return '.blog-post__text p';
+    } else if (source.toLowerCase() == 'huffingtonpost.com') {
+      return '.content-list-component.text p';
     }
 }
 

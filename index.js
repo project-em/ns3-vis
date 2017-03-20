@@ -80,9 +80,7 @@ function crawlAll() {
     var promises = []
     test = ["obama"];
     test.forEach((topic) => {
-        console.log(topic);
         promises.push(scrape.crawl(topic));
-        console.log("now crawling webhose");
         promises.push(scrape.crawlWebhose(topic));
     });
     return Promise.all(promises);
