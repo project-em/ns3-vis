@@ -119,8 +119,29 @@ exports.crawlWebhose = (topic) => {
       logo: logos["The Washington Post"],
       primaryColor: '#000000',
       secondaryColor: '#FFFFFF'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Washington Times",
+      url: "washingtontimes.com",
+      logo: logos["The Washington Times"],
+      primaryColor: '#FFFFFF',
+      secondaryColor: '#000000'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "Independent Journal Review",
+      url: "ijr.com",
+      logo: logos["Independent Journal Review"],
+      primaryColor: '#FFFFFF',
+      secondaryColor: '#000000'
+    }, topic).then(() => {
+    scrapeWebhose({
+      name: "The Blaze",
+      url: "theblaze.com",
+      logo: logos["The Blaze"],
+      primaryColor: '#E92500',
+      secondaryColor: '#FFFFFF'
     }, topic);
-    })})})})})})});
+    })})})})})})})})})});
 }
 
 function scrapeWebhose(source, topic) {
@@ -185,12 +206,18 @@ function getWebhoseArticles(source, topic) {
                     sentences: sentences,
                     headline: value.title,
                 };
-                return returned;
+                if (!returned.body || !returned.body.length) {
+                  return null;
+                } else {
+                  return returned;
+                }
             }, (failure) => {
               throw failure;
             });
         });
-        return Promise.all(results);
+        return Promise.all(results).then((results) => {
+            return results.filter((n) => { return !!n; }); 
+        });
     });
 };  
 
@@ -289,7 +316,7 @@ function pullBodyOfURL(article_data, source) {
             
             try {
               console.log("found", storyblocks.length, "at", article_data.url);
-              resolve(storyText);
+              resolve(storyText.trim());
             } catch (ex) {
               console.log("error in pullBodyOfURL")
               reject(ex);
@@ -327,6 +354,12 @@ function divClassTagFromSource(source, url) {
       return '.content-list-component.text p';
     } else if (source.toLowerCase() == "washingtonpost.com") {
       return "article > p";
+    } else if (source.toLowerCase() == "washingtontimes.com") {
+      return ".bigtext > p";
+    } else if (source.toLowerCase() == "ijr.com") {
+      return ".tk-proxima-nova p";
+    } else if (source.toLowerCase() == "theblaze.com") {
+      return ".entry-content p";
     }
 }
 

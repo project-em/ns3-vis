@@ -2,23 +2,40 @@ namespace ns3.main {
 
     export class TopicController {
 
+
         chart = {
             labels: [],
             biases: []
         }
         barOptions = {
+            legend: {
+                labels: {
+                    // fontColor: "#FFFFFF",
+                    fontSize: 18
+                }
+            },
             scales: {
                 xAxes:  [{
                     ticks: {
                         min: -10,
                         max: 10,
                         stepSize: 2
+                    },
+                    gridLines: {
+                        // color: "#FFFFFF"
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        // color: "#FFFFFF"
                     }
                 }]
-            }
+            },
         };
         constructor(private data: types.Source[],
             private $stateParams: ng.ui.IStateParamsService) {
+            Chart.defaults.global.scaleFontColor = '#FFFFFF';
+            Chart.defaults.global.scaleLineColor = '#FFFFFF';
             this.data.forEach((obj) => {
                 this.chart.labels.push(obj.name);
                 this.chart.biases.push(obj.bias);
