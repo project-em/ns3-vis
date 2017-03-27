@@ -31,7 +31,11 @@ exports.topicName = (topicId) => {
 }
 
 exports.topics = () => {
-  return schema.models.topic.all().then((topics) => { return topics; });
+  return schema.models.topic.findAll({
+    where: {
+        visible: true
+    }
+  }).then((topics) => { return topics; });
 }
 
 exports.sourceByName = (sourceName) => {

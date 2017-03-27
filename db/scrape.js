@@ -63,6 +63,69 @@ exports.crawl = (topic) => {
   });  
 }
 
+function walk(dir) {
+    var results = []
+    var list = fs.readdirSync(dir)
+    list.forEach(function(file) {
+        file = dir + '/' + file;
+        var stat = fs.statSync(file);
+        if (stat && stat.isDirectory()) results = results.concat(walk(file));
+        else results.push(file);
+    });
+    return results;
+}
+
+exports.seed = () => {
+    var sources = [{
+      name: "The Huffington Post",
+      url: "huffingtonpost.com",
+      logo: logos["The Huffington Post"],
+      primaryColor: '#2E7160',
+      secondaryColor: '#FFFFFF'
+    }, {
+      name: "CNN",
+      url: "cnn.com",
+      logo: logos["CNN"],
+      primaryColor: '#cc1417',
+      secondaryColor: '#FFFFFF'
+    }, {
+      name: "The Hill",
+      url: "thehill.com",
+      logo: logos["The Hill"],
+      primaryColor: '#0b4a9a',
+      secondaryColor: '#FFFFFF'
+    }, {
+      name: "Fox News",
+      url: "foxnews.com",
+      logo: logos["Fox News"],
+      primaryColor: '#183A53',
+      secondaryColor: '#FFFFFF'
+    }];
+    var path = "train/webhose/";
+    var files = walk(path);
+    return store.newTopic("seed", false).then((topic_obj) => {
+        var source_objs = sources.forEach((source) => {
+            return store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
+              
+            });
+        });
+        return Promise.all(source_objs).then((source_objs) => {
+            var source_map = source_objs.reduce(function(map, obj) {
+                map[obj.key] = obj.val;
+                return map;
+            }, {});
+            files.forEach((file) => {
+              var json = require(file);
+              
+            }
+        });
+
+    }).then((after) => {
+
+    })
+
+}
+
 exports.crawlWebhose = (topic) => {
     scrapeWebhose({
       name: "The Atlantic",
@@ -361,7 +424,7 @@ function divClassTagFromSource(source, url) {
     } else if (source.toLowerCase() == "theblaze.com") {
       return ".entry-content p";
     }
-}
+  }
 
 function createArticleJSObjects(data, bodies, sentences, source) {
   var objs = [];

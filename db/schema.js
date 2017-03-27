@@ -38,6 +38,9 @@ models.topic = exports.db.define('topic', {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+    },
+    visible: {
+        type: Sequelize.BOOLEAN
     }
 }, { freezeTableName: true });
 

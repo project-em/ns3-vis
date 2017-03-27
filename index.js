@@ -5,6 +5,7 @@ const express = require('express');
 const body_parser = require('body-parser');
 const schedule = require('node-schedule');
 const Promise = require('bluebird');
+const fs = require('fs');
 const schema = require('./db/schema.js');
 const queries = require('./db/queries.js');
 const store = require('./db/store.js');
@@ -76,12 +77,20 @@ app.use((req, res) => {
 
 /* SCHEDULED TASKS */
 
+function seed() {
+  return scrape.seed().then((result) => {
+      console.log("Seed data complete at", new Date());
+  })
+}
+
 function crawlAll() {
     var promises = []
-    test = ["obama"];
-    test.forEach((topic) => {
-        promises.push(scrape.crawl(topic));
-        promises.push(scrape.crawlWebhose(topic));
+    topics.forEach((topic) => {
+        promises.push(scrape.crawl(topic).then((result) => {
+            scrape.crawlWebhose(topic).then((result) => {
+                console.log("Finished acquisition for", topic);
+            });
+        }));
     });
     return Promise.all(promises);
 }

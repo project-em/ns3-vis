@@ -2,13 +2,14 @@ var schema = require('./schema.js');
 
 var exports = module.exports = {};
 
-exports.newTopic = (name) => {
+exports.newTopic = (name, visible) => {
     if (!name) {
         console.log("error in creating topic");
         throw "incomplete data";
     } else {
         return schema.models.topic.upsert({
-                name: name
+                name: name,
+                visible: visible
             }
         ).then(() => {
             return schema.models.topic.findOne({
