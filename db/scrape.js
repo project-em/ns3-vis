@@ -6,9 +6,9 @@ const jsdom = require("jsdom");
 const guardian = require('guardian-js');
 const Promise = require('bluebird');
 const request = require('request');
-const XRegExp = require('xregexp');
+const XRegExp = require('xregexp')
+const fs = require('fs');
 const logos = require("../logos.json");
-
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 var guardApi = new guardian(GUAR_KEY, false);
@@ -100,30 +100,92 @@ exports.seed = () => {
       logo: logos["Fox News"],
       primaryColor: '#183A53',
       secondaryColor: '#FFFFFF'
+    }, {
+      name: "The Blaze",
+      url: "theblaze.com",
+      logo: logos["The Blaze"],
+      primaryColor: '#E92500',
+      secondaryColor: '#FFFFFF'
     }];
     var path = "train/webhose/";
+    var maxFiles = 1000000000;
+    var filecount = 0;
     var files = walk(path);
     return store.newTopic("seed", false).then((topic_obj) => {
-        var source_objs = sources.forEach((source) => {
-            return store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
-              
-            });
+        var source_objs = [];
+        sources.forEach((source) => {
+            source_objs.push(store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor)
+                .then((src) => {
+                  return src;
+                }));
         });
-        return Promise.all(source_objs).then((source_objs) => {
-            var source_map = source_objs.reduce(function(map, obj) {
+        return Promise.all(source_objs).then((srcs) => {
+            var source_map = srcs.reduce(function(map, obj) {
                 map[obj.key] = obj.val;
                 return map;
             }, {});
+            var pulled_promises = [];
+            var articleSourceMap = [];
             files.forEach((file) => {
-              var json = require(file);
-              
-            }
+                filecount++;
+                if (filecount > maxFiles) return;
+                if (file.indexOf('DS_Store') != -1) return;
+                var json = require('../' + file.replace('//', '/'));
+                var url = json['url'];
+                var source = null;
+                srcs.forEach((src) => {
+                  if (!source && url.toLowerCase().indexOf(src.url) != -1) {
+                    source = src;
+                    articleSourceMap[url] = src.id;
+                  }
+                });
+                if (source == null) {
+                  console.log("couldn't match", url);
+                  return;
+                }
+                pulled_promises.push(pullBodyOfURL(json, source.url).then((body) => {
+                    var sentences = pullSentencesFromBody(body);
+                    if (sentences == null) {
+                      sentences = [];
+                    }
+                    var returned =  {
+                        url: json.url,
+                        body: body,
+                        source: source,
+                        sentences: sentences,
+                        headline: json.title,
+                    };
+                    if (!returned.body || !returned.body.length) {
+                      return null;
+                    } else {
+                      return returned;
+                    }
+                }).catch((failure) => {
+                  console.log(failure);
+                  return null;
+                }));
+            });
+            return Promise.all(pulled_promises).then((results) => {
+                console.log("pulled all promises");
+                results.forEach((article) => {
+                    if (article == null) {
+                      return;
+                    }
+                    store.newArticle(article, topic_obj.id, articleSourceMap[article.url], true).then((article_obj) => {
+                        // var promises = [];
+                        // article.sentences.forEach((sentence) => {
+                        //     // promises.push(store.newSentence(article_obj, sentence));
+                        // });
+                        // Promise.all(promises).then(() => {
+                        //   store.computeArticleBias(article_obj.id).then(() => {});
+                        // });
+                    }, (article_failure) => {
+                        throw article_failure;
+                    });
+                });
+            });
         });
-
-    }).then((after) => {
-
-    })
-
+    });
 }
 
 exports.crawlWebhose = (topic) => {
@@ -368,21 +430,25 @@ function pullBodyOfURL(article_data, source) {
         url: article_data.url,
         scripts: ["http://code.jquery.com/jquery.js"],
         done: function (err, window) {
-            var $ = window.$;
-            var bodyStrings = [];
-            var storyblocks = $(divClassTagFromSource(source, article_data.url));
-            storyblocks.each(function(idx, val) {
-                bodyStrings.push($(val).text());
-            });
-            
-            var storyText = bodyStrings.join(" ");
-            
-            try {
-              console.log("found", storyblocks.length, "at", article_data.url);
-              resolve(storyText.trim());
-            } catch (ex) {
-              console.log("error in pullBodyOfURL")
-              reject(ex);
+            if (err) {
+                reject("Error loading " + article_data.url);
+            }
+            else {
+                var $ = window.$;
+                var bodyStrings = [];
+                var storyblocks = $(divClassTagFromSource(source, article_data.url));
+                storyblocks.each(function(idx, val) {
+                    bodyStrings.push($(val).text());
+                });
+                var storyText = bodyStrings.join(" ");
+                
+                try {
+                  console.log("found", storyblocks.length, "at", article_data.url);
+                  resolve(storyText.trim());
+                } catch (ex) {
+                  console.log("error in pullBodyOfURL")
+                  reject(ex);
+                }
             }
         }
     });
