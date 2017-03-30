@@ -11,6 +11,8 @@ const fs = require('fs');
 const logos = require("../logos.json");
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
+const MAX_HISTORICAL_FILES = +process.env["MAX_HISTORICAL_FILES"] || 1000000000;
+const MAX_HISTORICAL_CONCURRENCY = +process.env["MAX_HISTORICAL_CONCURRENCY"] || 100;
 var guardApi = new guardian(GUAR_KEY, false);
 const webhoseApi = webhose.config({token: process.env["WEBHOSE_TOKEN"]});
 
@@ -76,6 +78,7 @@ function walk(dir) {
 }
 
 exports.seed = () => {
+    console.log("Starting historical scrape at " + new Date());
     var sources = [{
       name: "The Huffington Post",
       url: "huffingtonpost.com",
@@ -108,7 +111,7 @@ exports.seed = () => {
       secondaryColor: '#FFFFFF'
     }];
     var path = "train/webhose/";
-    var maxFiles = 1000000000;
+    var maxFiles = MAX_HISTORICAL_FILES;
     var filecount = 0;
     var files = walk(path);
     return store.newTopic("seed", false).then((topic_obj) => {
@@ -126,9 +129,9 @@ exports.seed = () => {
             }, {});
             var pulled_promises = [];
             var articleSourceMap = [];
-            files.forEach((file) => {
-                filecount++;
-                if (filecount > maxFiles) return;
+            return Promise.map(files, (file) => {
+                          filecount++;
+            if (filecount > maxFiles) return;
                 if (file.indexOf('DS_Store') != -1) return;
                 var json = require('../' + file.replace('//', '/'));
                 var url = json['url'];
@@ -143,7 +146,7 @@ exports.seed = () => {
                   console.log("couldn't match", url);
                   return;
                 }
-                pulled_promises.push(pullBodyOfURL(json, source.url).then((body) => {
+                return pullBodyOfURL(json, source.url).then((body) => {
                     var sentences = pullSentencesFromBody(body);
                     if (sentences == null) {
                       sentences = [];
@@ -163,10 +166,8 @@ exports.seed = () => {
                 }).catch((failure) => {
                   console.log(failure);
                   return null;
-                }));
-            });
-            return Promise.all(pulled_promises).then((results) => {
-                console.log("pulled all promises");
+                });
+            }, { concurrency: MAX_HISTORICAL_CONCURRENCY }).then((results) => {
                 results.forEach((article) => {
                     if (article == null) {
                       return;
@@ -183,6 +184,7 @@ exports.seed = () => {
                         throw article_failure;
                     });
                 });
+                console.log("Ending historical scrape at " + new Date());
             });
         });
     });
@@ -434,15 +436,15 @@ function pullBodyOfURL(article_data, source) {
                 reject("Error loading " + article_data.url);
             }
             else {
-                var $ = window.$;
-                var bodyStrings = [];
-                var storyblocks = $(divClassTagFromSource(source, article_data.url));
-                storyblocks.each(function(idx, val) {
-                    bodyStrings.push($(val).text());
-                });
-                var storyText = bodyStrings.join(" ");
                 
                 try {
+                  var $ = window.$;
+                  var bodyStrings = [];
+                  var storyblocks = $(divClassTagFromSource(source, article_data.url));
+                  storyblocks.each(function(idx, val) {
+                      bodyStrings.push($(val).text());
+                  });
+                  var storyText = bodyStrings.join(" ");
                   console.log("found", storyblocks.length, "at", article_data.url);
                   resolve(storyText.trim());
                 } catch (ex) {
