@@ -440,7 +440,7 @@ function pullBodyOfURL(article_data, source) {
                 try {
                   var $ = window.$;
                   var bodyStrings = [];
-                  var storyblocks = $(divClassTagFromSource(source, article_data.url));
+                  var storyblocks = $(divClassTagFromSource(source, article_data.url).join(', '));
                   storyblocks.each(function(idx, val) {
                       bodyStrings.push($(val).text());
                   });
@@ -463,34 +463,34 @@ function pullBodyOfURL(article_data, source) {
 function divClassTagFromSource(source, url) {
     if (source.toLowerCase() === "new york times") 
       if (url.includes("query.nytimes")) {
-        return '.articleBody p';
+        return ['.articleBody p'];
       } else {
-        return '.story-body-text.story-content';
+        return ['.story-body-text.story-content'];
       }
     else if (source.toLowerCase() === "guardian") 
-      return '.content__article-body.from-content-api.js-article__body p';
+      return ['.content__article-body.from-content-api.js-article__body p'];
     else if (source.toLowerCase() == 'thehill.com') {
-      return ".field-item.even > p";
+      return [".field-item.even > p"];
     } else if (source.toLowerCase() == 'cnn.com') {
-      return '.zn-body__paragraph';
+      return ['.zn-body__paragraph'];
     } else if (source.toLowerCase() == 'foxnews.com') {
-      return 'div.article-text > p';
+      return ['div.article-text > p'];
     } else if (source.toLowerCase() == "thefiscaltimes.com") {
-      return '';
+      return [''];
     } else if (source.toLowerCase() == "theatlantic.com") {
-      return '.article-body p';
+      return ['.article-body p'];
     } else if (source.toLowerCase() == "economist.com") {
-      return '.blog-post__text p';
+      return ['.blog-post__text p'];
     } else if (source.toLowerCase() == 'huffingtonpost.com') {
-      return '.content-list-component.text p';
+      return ['.content-list-component.text p', 'div.js-entry-body p'];
     } else if (source.toLowerCase() == "washingtonpost.com") {
-      return "article > p";
+      return ["article > p"];
     } else if (source.toLowerCase() == "washingtontimes.com") {
-      return ".bigtext > p";
+      return [".bigtext > p"];
     } else if (source.toLowerCase() == "ijr.com") {
-      return ".tk-proxima-nova p";
+      return [".tk-proxima-nova p"];
     } else if (source.toLowerCase() == "theblaze.com") {
-      return ".entry-content p";
+      return [".entry-content p"];
     }
   }
 
