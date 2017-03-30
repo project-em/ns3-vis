@@ -68,6 +68,10 @@ app.post('/api/scrape', (request, response) => {
   crawlAll().then(() => {response.sendStatus(200)});
 });
 
+app.post('/api/seed', (request, response) => {
+  scrape.seed().then((result) => response.sendStatus(200));
+});
+
 /* CONFIG */
 
 app.use((req, res) => {
@@ -100,6 +104,5 @@ function crawlAll() {
 schema.db.sync({force: false}).then((result) => {
   app.listen(app.get('port'), function() {
     console.log('DB synced and Node app is running on port', app.get('port'));
-    scrape.seed();
   });
 });
