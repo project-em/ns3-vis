@@ -130,8 +130,8 @@ exports.seed = () => {
             var pulled_promises = [];
             var articleSourceMap = [];
             return Promise.map(files, (file) => {
-                          filecount++;
-            if (filecount > maxFiles) return;
+                filecount++;
+                if (filecount > maxFiles) return;
                 if (file.indexOf('DS_Store') != -1) return;
                 var json = require('../' + file.replace('//', '/'));
                 var url = json['url'];
