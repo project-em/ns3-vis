@@ -191,7 +191,7 @@ exports.seed = () => {
 }
 
 exports.crawlWebhose = (topic) => {
-    scrapeWebhose({
+    return scrapeWebhose({
       name: "The Atlantic",
       url: "theatlantic.com",
       logo: logos["The Atlantic"],

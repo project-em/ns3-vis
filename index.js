@@ -64,7 +64,6 @@ app.post('/api/source', (request, response) => {
 });
 
 app.post('/api/scrape', (request, response) => {
-  console.log("Beginning scrape at " + new Date());
   crawlAll().then(() => {response.sendStatus(200)});
 });
 
@@ -88,21 +87,24 @@ function seed() {
 }
 
 function crawlAll() {
+    console.log("Beginning scrape at " + new Date());
     var promises = []
-    topics.forEach((topic) => {
-        promises.push(scrape.crawl(topic).then((result) => {
-            scrape.crawlWebhose(topic).then((result) => {
+    return Promise.map(topics, (topic) => {
+        return scrape.crawlWebhose(topic).then((result) => {
+            scrape.crawl(topic).then((result) => {
                 console.log("Finished acquisition for", topic);
             });
-        }));
+      });
+    }, { concurrency: 1 }).then((result) => {
+        console.log("Finished scrape at " + new Date());
     });
-    return Promise.all(promises);
 }
 
-// var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
 
 schema.db.sync({force: false}).then((result) => {
   app.listen(app.get('port'), function() {
     console.log('DB synced and Node app is running on port', app.get('port'));
+    crawlAll();
   });
 });
