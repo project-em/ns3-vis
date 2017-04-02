@@ -91,8 +91,10 @@ function crawlAll() {
     var promises = []
     return Promise.map(topics, (topic) => {
         return scrape.crawlWebhose(topic).then((result) => {
-            scrape.crawl(topic).then((result) => {
-                console.log("Finished acquisition for", topic);
+            return Promise.delay(1000).then(() => {
+                return scrape.crawl(topic).then((result) => {
+                    console.log("Finished acquisition for", topic);
+                });
             });
       });
     }, { concurrency: 1 }).then((result) => {
@@ -105,6 +107,6 @@ var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
 schema.db.sync({force: false}).then((result) => {
   app.listen(app.get('port'), function() {
     console.log('DB synced and Node app is running on port', app.get('port'));
-    crawlAll();
+    // crawlAll();
   });
 });

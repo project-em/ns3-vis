@@ -56,10 +56,12 @@ exports.articleBias = (articleId) => {
       { where: { 'articleId': articleId }}
     ).then((sum) => {
       totalSum = sum;
-      schema.models.sentence.count(
-        { where: { 'articleId': articleId }}
-      ).then((count) => {
-        article.bias = count == 0 ? 0 : totalSum / count;
+      schema.models.sentence.findAll(
+        { where: { 'articleId': articleId },
+          order: [['id', 'ASC']]}
+      ).then((sentences) => {
+        article.sentences = sentences
+        article.bias = sentences.length == 0 ? 0 : totalSum / sentences.length;
         return article;
       });
     });

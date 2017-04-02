@@ -38,7 +38,7 @@ namespace ns3.main.directives {
         public dive = () => {
             this.$state.go('main.article', { id : this.$scope.article.id });
         }
-    }
+    }`  `
 
     export class ArticleDirective {
 
