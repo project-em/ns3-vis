@@ -2,5 +2,14 @@
     "CNN": "/logos/cnn.png",
     "The Hill": "/logos/hill.jpg",
     "The Guardian": "/logos/guardian.png",
-    "New York Times": "/logos/nyt.png"
+    "New York Times": "/logos/nyt.png",
+    "Fox News": "/logos/fox.jpg",
+    "The Atlantic": "/logos/atlantic.png",
+    "The Fiscal Times": "/logos/ft.png",
+    "The Economist": "/logos/economist.png",
+    "The Huffington Post": "/logos/huffpost.jpg",
+    "The Washington Post": "/logos/washpo.png",
+    "The Washington Times": "/logos/wtimes.png",
+    "Independent Journal Review": "/logos/ijr.png",
+    "The Blaze": "/logos/blaze.png"
 }

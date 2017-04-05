@@ -38,6 +38,9 @@ models.topic = exports.db.define('topic', {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true
+    },
+    visible: {
+        type: Sequelize.BOOLEAN
     }
 }, { freezeTableName: true });
 
@@ -59,6 +62,10 @@ models.article = exports.db.define('article', {
         allowNull: false,
         unique: 'articleIndex'
     },
+    archivalDataFlag: {
+        type: Sequelize.FLOAT,
+        allowNull: true
+    }
 }, { freezeTableName: true });
 
 models.sentence = exports.db.define('sentence', {

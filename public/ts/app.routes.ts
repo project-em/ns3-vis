@@ -46,6 +46,19 @@ namespace ns3.main {
                 }
             }
         })
+        .state("main.article", {
+            url: "/article?id",
+            templateUrl: "html/article.detail.html",
+            controller: "ArticleDetailController",
+            controllerAs: "ctrl",
+            resolve: {
+                article: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
+                    return $http.get('/api/article/' + $stateParams['id']).then((response) => {
+                        return response.data as types.Article;
+                    });
+                }
+            }
+        })
         ;
     });
 }

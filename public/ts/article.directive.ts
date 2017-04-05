@@ -21,15 +21,24 @@ namespace ns3.main.directives {
         };
 
         constructor(private $state: ng.ui.IStateService, 
-                    private $scope: ArticleDirectiveScope) {
+                    private $scope: ArticleDirectiveScope,
+                    private $window: ng.IWindowService) {
             this.barData.push(this.$scope.article.bias);
             this.barLabels.push("");
         }
 
         public go = () => {
+            if (this.$scope.article.url.indexOf('http://') == -1 && this.$scope.article.url.indexOf('https://') == -1) {
+                this.$scope.article.url = 'http://' + this.$scope.article.url;
+            }
+            console.log(this.$scope.article.url);
+            this.$window.open(this.$scope.article.url);
+        }
+
+        public dive = () => {
             this.$state.go('main.article', { id : this.$scope.article.id });
         }
-    }
+    }`  `
 
     export class ArticleDirective {
 

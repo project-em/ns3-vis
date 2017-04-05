@@ -2,13 +2,14 @@ var schema = require('./schema.js');
 
 var exports = module.exports = {};
 
-exports.newTopic = (name) => {
+exports.newTopic = (name, visible) => {
     if (!name) {
         console.log("error in creating topic");
         throw "incomplete data";
     } else {
         return schema.models.topic.upsert({
-                name: name
+                name: name,
+                visible: visible
             }
         ).then(() => {
             return schema.models.topic.findOne({
@@ -44,7 +45,13 @@ exports.newSource = (name, url, logo, primaryColor, secondaryColor) => {
     }
 };
 
-exports.newArticle = (articleObj, topicId, sourceId) => {
+exports.newArticle = (articleObj, topicId, sourceId, isArchivalData) => {
+    
+    var archivalDataFlag = 0;
+    if (isArchivalData) {
+        archivalDataFlag = 1;
+    }
+
     if (!articleObj) {
         console.log("error in creating article");
         throw "incomplete data";
@@ -54,7 +61,8 @@ exports.newArticle = (articleObj, topicId, sourceId) => {
             body: articleObj.body,
             url: articleObj.url,
             topicId: topicId,
-            sourceId: sourceId
+            sourceId: sourceId,
+            archivalDataFlag: archivalDataFlag
         }).then(() => {
             return schema.models.article.findOne({
                 where: {

@@ -5,6 +5,7 @@ const express = require('express');
 const body_parser = require('body-parser');
 const schedule = require('node-schedule');
 const Promise = require('bluebird');
+const fs = require('fs');
 const schema = require('./db/schema.js');
 const queries = require('./db/queries.js');
 const store = require('./db/store.js');
@@ -63,8 +64,17 @@ app.post('/api/source', (request, response) => {
 });
 
 app.post('/api/scrape', (request, response) => {
-  console.log("Beginning scrape at " + new Date());
   crawlAll().then(() => {response.sendStatus(200)});
+});
+
+app.post('/api/seed', (request, response) => {
+  scrape.seed().then((result) => response.sendStatus(200));
+});
+
+app.post('/api/bias', (request, response) => {
+  return queries.fillArticleBiases().then(() => {
+    response.sendStatus(200);
+  });
 });
 
 /* CONFIG */
@@ -76,19 +86,39 @@ app.use((req, res) => {
 
 /* SCHEDULED TASKS */
 
+function biasFill() {
+  return queries.fillArticleBiases().then(() => {
+    response.sendStatus(200);
+  });
+}
+function seed() {
+  return scrape.seed().then((result) => {
+      console.log("Seed data complete at", new Date());
+  })
+}
+
 function crawlAll() {
+    console.log("Beginning scrape at " + new Date());
     var promises = []
-    topics.forEach((topic) => {
-        promises.push(scrape.crawl(topic));
-        promises.push(scrape.crawlWebhose(topic));
+    return Promise.map(topics, (topic) => {
+        return scrape.crawlWebhose(topic).then((result) => {
+            return Promise.delay(1000).then(() => {
+                return scrape.crawl(topic).then((result) => {
+                    console.log("Finished acquisition for", topic);
+                });
+            });
+      });
+    }, { concurrency: 1 }).then((result) => {
+        console.log("Finished scrape at " + new Date());
     });
-    return Promise.all(promises);
 }
 
 var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+var hourly2 = schedule.scheduleJob('* 0 * * * *', () => biasFill);
 
 schema.db.sync({force: false}).then((result) => {
   app.listen(app.get('port'), function() {
     console.log('DB synced and Node app is running on port', app.get('port'));
+    // crawlAll();
   });
 });
