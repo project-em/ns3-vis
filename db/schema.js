@@ -76,6 +76,10 @@ models.sentence = exports.db.define('sentence', {
     bias: {
         type: Sequelize.FLOAT,
         allowNull: false,
+    },
+    topicRelevance: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
     }
 }, { freezeTableName: true });
 
