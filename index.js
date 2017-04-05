@@ -71,6 +71,12 @@ app.post('/api/seed', (request, response) => {
   scrape.seed().then((result) => response.sendStatus(200));
 });
 
+app.post('/api/bias', (request, response) => {
+  return queries.fillArticleBiases().then(() => {
+    response.sendStatus(200);
+  });
+});
+
 /* CONFIG */
 
 app.use((req, res) => {
@@ -80,6 +86,11 @@ app.use((req, res) => {
 
 /* SCHEDULED TASKS */
 
+function biasFill() {
+  return queries.fillArticleBiases().then(() => {
+    response.sendStatus(200);
+  });
+}
 function seed() {
   return scrape.seed().then((result) => {
       console.log("Seed data complete at", new Date());
@@ -103,6 +114,7 @@ function crawlAll() {
 }
 
 var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+var hourly2 = schedule.scheduleJob('* 0 * * * *', () => biasFill);
 
 schema.db.sync({force: false}).then((result) => {
   app.listen(app.get('port'), function() {

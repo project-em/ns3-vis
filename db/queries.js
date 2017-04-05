@@ -1,4 +1,5 @@
 var schema = require('./schema.js');
+const Promise = require('bluebird');
 
 var exports = module.exports = {};
 
@@ -48,22 +49,44 @@ exports.sourceByName = (sourceName) => {
   })
 }
 
+exports.fillArticleBiases = () => {
+    return schema.models.article.findAll({attributes : ['id'], where: { archivalDataFlag: 0}}).then((articles) => {
+      return Promise.map(articles, (article) => {
+          return schema.models.sentence.findAll({
+              attributes: ['id', 'bias'],
+              where: {
+                'articleId': article.id,
+              }
+          }).then((sentences) => {
+              var totalSum = 0;``
+              sentences.forEach((sentence) => { totalSum += sentence.bias });
+              article.bias = -10 * (sentences.length == 0 ? 0 : totalSum / sentences.length);
+              // console.log("Setting bias of", article.id, "to", article.bias);
+              return schema.models.article.update({
+                  bias: article.bias
+              }, {
+                  where: {
+                    'id': article.id
+                  },
+                  returning: true,
+                  plain: true
+              }).then((result) => {});
+          });
+      })
+    });
+}
+
 exports.articleBias = (articleId) => {
   var totalSum;
-  return schema.models.article.findById(articleId).then((article) => {
+  return schema.models.article.findById(articleId, { plain: true }).then((article) => {
     if (!article) return 0;
-    schema.models.sentence.sum('bias',
-      { where: { 'articleId': articleId }}
-    ).then((sum) => {
-      totalSum = sum;
-      schema.models.sentence.findAll(
+    return schema.models.sentence.findAll(
         { where: { 'articleId': articleId },
-          order: [['id', 'ASC']]}
-      ).then((sentences) => {
-        article.sentences = sentences
-        article.bias = sentences.length == 0 ? 0 : totalSum / sentences.length;
-        return article;
+          order: [['id', 'ASC']]
+        }).then((sentences) => {
+        var result = article.get({plain: true});
+        result.sentences = sentences;
+        return result;
       });
-    });
   });
 }

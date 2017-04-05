@@ -8,9 +8,10 @@ namespace ns3.main {
             biases: []
         }
         barOptions = {
+            backgroundColor: [],
             legend: {
                 labels: {
-                    // fontColor: "#FFFFFF",
+                    fontColor: "#FFFFFF",
                     fontSize: 18
                 }
             },
@@ -20,6 +21,10 @@ namespace ns3.main {
                         min: -10,
                         max: 10,
                         stepSize: 2
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Bais (Liberal <-----> Conservative"
                     },
                     gridLines: {
                         // color: "#FFFFFF"
@@ -39,6 +44,7 @@ namespace ns3.main {
             this.data.forEach((obj) => {
                 this.chart.labels.push(obj.name);
                 this.chart.biases.push(obj.bias);
+                this.barOptions.backgroundColor.push(obj.primaryColor);
             });
             if ($stateParams['id'] == -1) {
                 this.chart = {

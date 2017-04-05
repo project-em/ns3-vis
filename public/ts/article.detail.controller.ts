@@ -2,7 +2,7 @@ namespace ns3.main {
 
     export class ArticleDetailController {
 
-        constructor(private sentences: types.Sentence[],
+        constructor(private article: types.Article,
             private $stateParams: ng.ui.IStateParamsService) {
         }
         
