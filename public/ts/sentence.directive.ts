@@ -14,7 +14,7 @@ namespace ns3.main.directives {
             if (this.$scope.sentence.bias == 0) {
                 return "background-color: white; color: black;";
             } else {
-                var hue = this.$scope.sentence.bias > 0 ? 0 : 0.6;
+                var hue = this.$scope.sentence.bias > 0 ? 0.6 : 0;
                 var lightness = 0.6;
                 var saturation = 0.8;
                 var rgbs = this.hslToRgb(hue, saturation, lightness);

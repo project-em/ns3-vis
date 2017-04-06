@@ -49,13 +49,17 @@ exports.sourceByName = (sourceName) => {
   })
 }
 
-exports.fillArticleBiases = () => {
+exports.fillArticleBiases = (threshold) => {
+    console.log(threshold);
     return schema.models.article.findAll({attributes : ['id'], where: { archivalDataFlag: 0}}).then((articles) => {
       return Promise.map(articles, (article) => {
           return schema.models.sentence.findAll({
               attributes: ['id', 'bias'],
               where: {
                 'articleId': article.id,
+                'topicRelevance': {
+                    $gte: threshold
+                }
               }
           }).then((sentences) => {
               var totalSum = 0;``
