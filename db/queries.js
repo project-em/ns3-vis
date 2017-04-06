@@ -4,7 +4,7 @@ const Promise = require('bluebird');
 var exports = module.exports = {};
 
 exports.articlesFor = (topic) => {
-  return schema.models.source.all({
+  return schema.models.source.findAll({
     include: [
       {
         model: schema.models.article,
@@ -20,7 +20,7 @@ exports.articlesFor = (topic) => {
     group: ['source.id', 'articles.id'],
   }).then((results) => {
     results.forEach((result) => {
-      result.articles.length = 5; // cap at 5 articles, should use SQL limit btu complicated to preserve avg
+      result.articles.length = Math.min(5, result.articles.length); // cap at 5 articles, should use SQL limit btu complicated to preserve avg
     });
     return results;
   });

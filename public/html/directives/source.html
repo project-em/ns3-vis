@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </uib-accordion-heading>
-            <article style="color: {{source.secondaryColor}};" ng-repeat="article in source.articles" article="article"></article>
+            <article style="color: {{source.secondaryColor}};" ng-repeat="article in source.articles track by article.id" article="article"></article>
         </div>
     </uib-accordion>
 </div>
