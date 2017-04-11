@@ -78,7 +78,7 @@ app.post('/api/seed', (request, response) => {
 });
 
 app.post('/api/bias', (request, response) => {
-  return queries.fillArticleBiases().then(() => {
+  return queries.fillArticleBiases(request.body.threshold).then(() => {
     response.sendStatus(200);
   });
 });
