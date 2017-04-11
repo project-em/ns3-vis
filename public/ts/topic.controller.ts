@@ -42,6 +42,9 @@ namespace ns3.main {
             private $stateParams: ng.ui.IStateParamsService) {
             Chart.defaults.global.scaleFontColor = '#FFFFFF';
             Chart.defaults.global.scaleLineColor = '#FFFFFF';
+            Chart.defaults.global.responsive = true;
+            Chart.defaults.global.maintainAspectRatio = false;
+            
             this.data.forEach((obj) => {
                 this.chart.labels.push(obj.name);
                 this.chart.biases.push(obj.bias);
