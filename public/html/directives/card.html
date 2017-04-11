@@ -1,7 +1,7 @@
-<div class="card container">
+<div class="card container" ng-click="ctrl.dive(); $event.stopPropagation()">
     <div class="row">
         <div class="col-md-12">
-            <h2 ng-bind=":topic.title"></h2>
+            <h2 ng-bind="::topic.name"></h2>
         </div>
     </div>
     <div class="row">

@@ -6,8 +6,13 @@ namespace ns3.main.directives {
 
     export class CardDirectiveController {
     
-        chart: any;
-        barOptions: any;
+        chart = {
+            labels: [],
+            biases: []
+        };
+        barOptions = {
+            backgroundColor: []
+        };
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: CardDirectiveScope) {
             $scope.topic.sources.forEach((obj) => {
@@ -15,6 +20,10 @@ namespace ns3.main.directives {
                 this.chart.biases.push(obj.bias);
                 this.barOptions.backgroundColor.push(obj.primaryColor);
             });
+        }
+
+        public dive = () => {
+            this.$state.go("main.topic", { id: this.$scope.topic.id });
         }
     }
 

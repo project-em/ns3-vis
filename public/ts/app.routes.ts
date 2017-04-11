@@ -20,7 +20,7 @@ namespace ns3.main {
                     });
                 },
                 data: ($http: ng.IHttpService) => {
-                    return $http.get('/api/frontpage').then((response) => {
+                    return $http.get('/api/previews').then((response) => {
                         return response.data as types.Topic;
                     });
                 }

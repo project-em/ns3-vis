@@ -38,6 +38,7 @@ namespace ns3.main {
             },
         };
         constructor(private data: types.Source[],
+            private $state: ng.ui.IState,
             private $stateParams: ng.ui.IStateParamsService) {
             Chart.defaults.global.scaleFontColor = '#FFFFFF';
             Chart.defaults.global.scaleLineColor = '#FFFFFF';

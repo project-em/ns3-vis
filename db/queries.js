@@ -26,11 +26,11 @@ exports.articlesFor = (topic) => {
   });
 };
 
-exports.previews = (topic) => {
+exports.previews = () => {
   return schema.models.topic.findAll({
     where: {
         visible: true
-    }
+    },
   }).then((topics) => {
     return Promise.map(topics, (topic) => {
       return schema.models.source.all({
@@ -38,7 +38,7 @@ exports.previews = (topic) => {
           {
             model: schema.models.article,
             where: {
-              'topicId': topic,
+              'topicId': topic.id,
             },
           }
         ],
@@ -49,11 +49,13 @@ exports.previews = (topic) => {
         group: ['source.id', 'articles.id'],
       }).then((results) => {
         results.forEach((result) => {
-          result.articles.length = 0; // Empty out the articles array, we only need the overall bias score for the topic
+          result.articles = null;
         });
-        return results;
+        var newTopic = topic.get({plain: true});
+        newTopic.sources = results;
+        return newTopic;
       });
-    };
+    });
   });
 };
 
