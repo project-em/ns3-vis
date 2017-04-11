@@ -38,6 +38,12 @@ app.get('/api/topics', (request, response) => {
   })
 });
 
+app.get('/api/previews', (request, response) => {
+  queries.previews().then((data) => {
+    response.json(data);
+  })
+});
+
 app.get('/api/topic/:topic/articles', (request, response) => {
   queries.articlesFor(request.params.topic).then((data) => {
     response.json(data);

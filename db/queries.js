@@ -26,6 +26,37 @@ exports.articlesFor = (topic) => {
   });
 };
 
+exports.previews = (topic) => {
+  return schema.models.topic.findAll({
+    where: {
+        visible: true
+    }
+  }).then((topics) => {
+    return Promise.map(topics, (topic) => {
+      return schema.models.source.all({
+        include: [
+          {
+            model: schema.models.article,
+            where: {
+              'topicId': topic,
+            },
+          }
+        ],
+        order: ['source.name'],
+        attributes: {
+          include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
+        },
+        group: ['source.id', 'articles.id'],
+      }).then((results) => {
+        results.forEach((result) => {
+          result.articles.length = 0; // Empty out the articles array, we only need the overall bias score for the topic
+        });
+        return results;
+      });
+    };
+  });
+};
+
 exports.topicName = (topicId) => {
   var topic = schema.models.topic.findById(topicId);
   return topic;
