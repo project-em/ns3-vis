@@ -2,7 +2,7 @@ namespace ns3.main {
 
     export class HomeController {
 
-        constructor() {            
+        constructor(private data: types.Topic) {            
         }
 
         

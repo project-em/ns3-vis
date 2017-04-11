@@ -13,6 +13,7 @@ const scrape = require('./db/scrape.js');
 const topics = require('./topics.json');
 
 const app = express();
+const redis = require('redis').createClient(process.env.REDIS_URL);
 
 /* CONFIG */
 
@@ -51,6 +52,7 @@ app.get('/api/topic/:topic/name', (request, response) => {
 
 app.get('/api/article/:article', (request, response) => {
   queries.articleBias(request.params.article).then((data) => {
+    data.threshold = redis.get("threshold");
     response.json(data);
   })
 });
@@ -73,6 +75,7 @@ app.post('/api/seed', (request, response) => {
 
 app.post('/api/bias', (request, response) => {
   return queries.fillArticleBiases(request.body.threshold).then(() => {
+    redis.set("threshold", request.body.threshold);
     response.sendStatus(200);
   });
 });
@@ -113,7 +116,7 @@ function crawlAll() {
     });
 }
 
-var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
+// var hourly = schedule.scheduleJob('* 0 * * * *', () => crawlAll);
 var hourly2 = schedule.scheduleJob('* 0 * * * *', () => biasFill);
 
 schema.db.sync({force: false}).then((result) => {

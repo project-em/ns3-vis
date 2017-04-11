@@ -1,0 +1,17 @@
+<div class="card container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 ng-bind=":topic.title"></h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <canvas id="topic-bar" class="chart chart-horizontal-bar"
+                chart-data="ctrl.chart.biases"
+                chart-labels="ctrl.chart.labels"
+                chart-colors="ctrl.barOptions.backgroundColor"
+                chart-options="ctrl.barOptions">
+            </canvas>
+        </div>
+    </div>
+</div>

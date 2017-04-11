@@ -32,4 +32,8 @@ namespace ns3.main.types {
         secondaryColor?: string;
     }
 
+    export interface Topic {
+        sources: Source[];
+        name: string;
+    }
 }

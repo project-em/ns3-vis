@@ -18,6 +18,11 @@ namespace ns3.main {
                     return $http.get('/api/topics').then((response) => {
                         return response.data as types.Topic[];
                     });
+                },
+                data: ($http: ng.IHttpService) => {
+                    return $http.get('/api/frontpage').then((response) => {
+                        return response.data as types.Topic;
+                    });
                 }
             }
         })
