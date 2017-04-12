@@ -5,8 +5,8 @@ namespace ns3.main {
         constructor(private article: types.Article,
             private $state: ng.ui.IStateService,
             private $stateParams: ng.ui.IStateParamsService) {
+
         }
-        
 
     }
 

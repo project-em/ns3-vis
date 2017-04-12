@@ -11,6 +11,7 @@ namespace ns3.main.types {
     export interface Sentence extends Data {
         content: string;
         bias: number;
+        topicRelevance?: number;
     };
 
     export interface Article extends Data {

@@ -13,7 +13,9 @@ const scrape = require('./db/scrape.js');
 const topics = require('./topics.json');
 
 const app = express();
-const redis = require('redis').createClient(process.env.REDIS_URL);
+var redis_internal = require('redis');
+// Promise.promisifyAll(redis_internal.RedisClient.prototype);
+const redis = redis_internal.createClient(process.env.REDIS_URL);
 
 /* CONFIG */
 
@@ -58,9 +60,11 @@ app.get('/api/topic/:topic/name', (request, response) => {
 
 app.get('/api/article/:article', (request, response) => {
   queries.articleBias(request.params.article).then((data) => {
-    data.threshold = redis.get("threshold");
-    response.json(data);
-  })
+    redis.get("threshold", (err, value) => {
+      data.threshold = value;
+      response.json(data);
+    });
+  });
 });
 
 app.post('/api/source', (request, response) => {
@@ -80,6 +84,7 @@ app.post('/api/seed', (request, response) => {
 });
 
 app.post('/api/bias', (request, response) => {
+  console.log(request.body)
   return queries.fillArticleBiases(request.body.threshold).then(() => {
     redis.set("threshold", request.body.threshold);
     response.sendStatus(200);

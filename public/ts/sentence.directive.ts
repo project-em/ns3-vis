@@ -2,16 +2,25 @@ namespace ns3.main.directives {
 
     interface SentenceDirectiveScope {
         sentence: types.Sentence;
+        threshold: number;
     }
 
     export class SentenceDirectiveController {
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: SentenceDirectiveScope) {
-            console.log($scope.sentence);
+            console.log($scope.threshold);
+            console.log($scope.sentence.topicRelevance);
         }
 
+
         public sentenceStyle = () => {
-            if (this.$scope.sentence.bias == 0) {
+            if (this.$scope.sentence.topicRelevance < this.$scope.threshold) {
+                var hue = 0;
+                var lightness = 0.75;
+                var saturation = 0;
+                var rgbs = this.hslToRgb(hue, saturation, lightness)
+                return  "background-color: rgb(" + rgbs[0] + ", " + rgbs[1] + ", " + rgbs[2] + "); color: black;";
+            } else if (this.$scope.sentence.bias == 0) {
                 return "background-color: white; color: black;";
             } else {
                 var hue = this.$scope.sentence.bias > 0 ? 0.6 : 0;
@@ -57,7 +66,8 @@ namespace ns3.main.directives {
         public controllerAs = 'ctrl';
         public templateUrl = 'html/directives/sentence.html';
         public scope = {
-            sentence: '='
+            sentence: '=',
+            threshold: '='
         };
 
         static Factory = () => {
