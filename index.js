@@ -127,7 +127,7 @@ function crawlAll() {
     });
 }
 
-var daily = schedule.scheduleJob('0 0 * * * *', () => crawlAll);
+// var daily = schedule.scheduleJob('0 0 * * * *', () => crawlAll);
 var hourly2 = schedule.scheduleJob('0 1 * * * *', () => biasFill);
 
 schema.db.sync({force: false}).then((result) => {

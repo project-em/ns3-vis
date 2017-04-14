@@ -188,84 +188,88 @@ exports.seed = () => {
 }
 
 exports.crawlWebhose = (topic) => {
-    return scrapeWebhose({
-      name: "The Atlantic",
-      url: "theatlantic.com",
-      logo: logos["The Atlantic"],
-      primaryColor: '#000000',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "CNN",
-      url: "cnn.com",
-      logo: logos["CNN"],
-      primaryColor: '#cc1417',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Hill",
-      url: "thehill.com",
-      logo: logos["The Hill"],
-      primaryColor: '#0b4a9a',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "Fox News",
-      url: "foxnews.com",
-      logo: logos["Fox News"],
-      primaryColor: '#183A53',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Fiscal Times",
-      url: "thefiscaltimes.com",
-      logo: logos["The Fiscal Times"],
-      primaryColor: '#D94331',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Economist",
-      url: "economist.com",
-      logo: logos["The Economist"],
-      primaryColor: '#E3120B',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Huffington Post",
-      url: "huffingtonpost.com",
-      logo: logos["The Huffington Post"],
-      primaryColor: '#2E7160',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Washington Post",
-      url: "washingtonpost.com",
-      logo: logos["The Washington Post"],
-      primaryColor: '#000000',
-      secondaryColor: '#FFFFFF'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Washington Times",
-      url: "washingtontimes.com",
-      logo: logos["The Washington Times"],
-      primaryColor: '#FFFFFF',
-      secondaryColor: '#000000'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "Independent Journal Review",
-      url: "ijr.com",
-      logo: logos["Independent Journal Review"],
-      primaryColor: '#FFFFFF',
-      secondaryColor: '#000000'
-    }, topic).then(() => {
-    scrapeWebhose({
-      name: "The Blaze",
-      url: "theblaze.com",
-      logo: logos["The Blaze"],
-      primaryColor: '#E92500',
-      secondaryColor: '#FFFFFF'
-    }, topic);
-    })})})})})})})})})});
+    var sources = [
+      {
+        name: "The Atlantic",
+        url: "theatlantic.com",
+        logo: logos["The Atlantic"],
+        primaryColor: '#000000',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "CNN",
+        url: "cnn.com",
+        logo: logos["CNN"],
+        primaryColor: '#cc1417',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "The Hill",
+        url: "thehill.com",
+        logo: logos["The Hill"],
+        primaryColor: '#0b4a9a',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "Fox News",
+        url: "foxnews.com",
+        logo: logos["Fox News"],
+        primaryColor: '#183A53',
+        secondaryColor: '#FFFFFF',
+      },
+      {
+        name: "The Fiscal Times",
+        url: "thefiscaltimes.com",
+        logo: logos["The Fiscal Times"],
+        primaryColor: '#D94331',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "The Economist",
+        url: "economist.com",
+        logo: logos["The Economist"],
+        primaryColor: '#E3120B',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "The Huffington Post",
+        url: "huffingtonpost.com",
+        logo: logos["The Huffington Post"],
+        primaryColor: '#2E7160',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "The Washington Post",
+        url: "washingtonpost.com",
+        logo: logos["The Washington Post"],
+        primaryColor: '#000000',
+        secondaryColor: '#FFFFFF'
+      },
+      {
+        name: "The Washington Times",
+        url: "washingtontimes.com",
+        logo: logos["The Washington Times"],
+        primaryColor: '#FFFFFF',
+        secondaryColor: '#000000',
+      },
+      {
+        name: "Independent Journal Review",
+        url: "ijr.com",
+        logo: logos["Independent Journal Review"],
+        primaryColor: '#FFFFFF',
+        secondaryColor: '#000000',
+      },
+      {
+        name: "The Blaze",
+        url: "theblaze.com",
+        logo: logos["The Blaze"],
+        primaryColor: '#E92500',
+        secondaryColor: '#FFFFFF'
+      }
+    ];
+    return Promise.map(source, (source) => {
+        return scrapeWebhose(source, topic);
+    }, {concurrency: 1});
 }
 
 function scrapeWebhose(source, topic) {
@@ -273,20 +277,16 @@ function scrapeWebhose(source, topic) {
     return store.newTopic(topic).then((topic_obj) => {
         return store.newSource(source.name, source.url, source.logo, source.primaryColor, source.secondaryColor).then((source_obj) => {
             return getWebhoseArticles(source_obj.url, topic_obj.name).then((articles) => {
-                articles.forEach((article) => {
-                    store.newArticle(article, topic_obj.id, source_obj.id, false).then((article_obj) => {
-                        // var promises = [];
-                        // article.sentences.forEach((sentence) => {
-                        //     // promises.push(store.newSentence(article_obj, sentence));
-                        // });
-                        // Promise.all(promises).then(() => {
-                        //   store.computeArticleBias(article_obj.id).then(() => {});
-                        // });
+                return Promise.map(articles, (article) => {
+                    return store.newArticle(article, topic_obj.id, source_obj.id, false).then(() => {
+                        return true;
                     }, (article_failure) => {
                         throw article_failure;
                     });
+                }, {concurrency: MAX_HISTORICAL_CONCURRENCY}).then(() => {
+                  console.log('Finished WebHose for', topic, 'on', source.name);
+                  return true;
                 });
-                console.log('Finished WebHose for', topic, 'on', source.name);
             }, (webhose_failure) => {
               throw webhose_failure;
             });
@@ -318,7 +318,7 @@ function getWebhoseArticles(source, topic) {
         });
 
         var keys = Object.keys(foundUrls);
-        var results = keys.map((key) => {
+        return Promise.map(keys, (key) => {
             var value = foundUrls[key];
             return pullBodyOfURL(value, source).then((body) => {
                 var sentences = pullSentencesFromBody(body);
@@ -340,8 +340,7 @@ function getWebhoseArticles(source, topic) {
             }, (failure) => {
               throw failure;
             });
-        });
-        return Promise.all(results).then((results) => {
+        }, {concurrency: MAX_HISTORICAL_CONCURRENCY}).then((results) => {
             return results.filter((n) => { return !!n; }); 
         });
     });
@@ -473,7 +472,7 @@ function divClassTagFromSource(source, url) {
     } else if (source.toLowerCase() == 'cnn.com') {
       return ['.zn-body__paragraph'];
     } else if (source.toLowerCase() == 'foxnews.com') {
-      return ['div.article-text > p'];
+      return ['div.article-text > p', ".field-item p"];
     } else if (source.toLowerCase() == "thefiscaltimes.com") {
       return [''];
     } else if (source.toLowerCase() == "theatlantic.com") {
