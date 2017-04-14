@@ -472,7 +472,7 @@ function divClassTagFromSource(source, url) {
     } else if (source.toLowerCase() == 'cnn.com') {
       return ['.zn-body__paragraph'];
     } else if (source.toLowerCase() == 'foxnews.com') {
-      return ['div.article-text > p', ".field-item p"];
+      return ['div.article-text > p', ".field-item p", "#block-system-main > div > article > div > div > p"];
     } else if (source.toLowerCase() == "thefiscaltimes.com") {
       return [''];
     } else if (source.toLowerCase() == "theatlantic.com") {
