@@ -84,8 +84,7 @@ app.post('/api/seed', (request, response) => {
 });
 
 app.post('/api/bias', (request, response) => {
-  console.log(request.body)
-  return queries.fillArticleBiases(request.body.threshold).then(() => {
+  return queries.fillArticleBiases(request.body.threshold, request.body.log_ma).then(() => {
     redis.set("threshold", request.body.threshold);
     response.sendStatus(200);
   });
@@ -113,13 +112,10 @@ function seed() {
 
 function crawlAll() {
     console.log("Beginning scrape at " + new Date());
-    var promises = []
     return Promise.map(topics, (topic) => {
         return scrape.crawlWebhose(topic).then((result) => {
-            return Promise.delay(1000).then(() => {
-                return scrape.crawl(topic).then((result) => {
-                    console.log("Finished acquisition for", topic);
-                });
+            return scrape.crawl(topic).then((result) => {
+                console.log("Finished acquisition for", topic);
             });
       });
     }, { concurrency: 1 }).then((result) => {

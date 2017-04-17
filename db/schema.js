@@ -40,7 +40,8 @@ models.topic = exports.db.define('topic', {
         unique: true
     },
     visible: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: () => { return true; }
     }
 }, { freezeTableName: true });
 
