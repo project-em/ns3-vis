@@ -23,7 +23,7 @@ exports.crawl = (topic) => {
     return store.newSource("New York Times", getSourceURLFromSourceName("New York Times"), logos["New York Times"], '#000000', '#FFFFFF').then(function(NYTSourceObj){
       return store.newSource("The Guardian", getSourceURLFromSourceName("The Guardian"), logos["The Guardian"], '#004a83', '#FFFFFF').then(function(GUARSourceObj){
           return getGuardianArticles(topic).then(function(GUAR_data) {
-            pullBodyFromURLSet(GUAR_data, "guardian").then(function(GUAR_bodies) {
+            return pullBodyFromURLSet(GUAR_data, "guardian").then(function(GUAR_bodies) {
               var GUAR_sentences = pullSentencesFromBodies(GUAR_bodies);
               var GUAR_objs = createArticleJSObjects(GUAR_data, GUAR_bodies, GUAR_sentences, "The Guardian");
               GUAR_objs.forEach((value, index) => {
@@ -281,6 +281,7 @@ function scrapeWebhose(source, topic) {
                     return store.newArticle(article, topic_obj.id, source_obj.id, false).then(() => {
                         return true;
                     }, (article_failure) => {
+                        console.log(article_failure);
                         throw article_failure;
                     });
                 }, {concurrency: MAX_HISTORICAL_CONCURRENCY}).then(() => {

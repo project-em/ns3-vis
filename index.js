@@ -84,7 +84,7 @@ app.post('/api/seed', (request, response) => {
 });
 
 app.post('/api/bias', (request, response) => {
-  return queries.fillArticleBiases(request.body.threshold, request.body.log_ma).then(() => {
+  return queries.fillArticleBiases(request.body.threshold, request.body.log_max).then(() => {
     redis.set("threshold", request.body.threshold);
     response.sendStatus(200);
   });

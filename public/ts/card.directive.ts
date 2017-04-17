@@ -11,7 +11,36 @@ namespace ns3.main.directives {
             biases: []
         };
         barOptions = {
-            backgroundColor: []
+            lineAtIndex: 0,
+            backgroundColor: [],
+            legend: {
+                labels: {
+                    fontColor: "#FFFFFF",
+                    fontSize: 18
+                }
+            },
+            scales: {
+                xAxes:  [{
+                    display: false,
+                    ticks: {
+                        min: -10,
+                        max: 10,
+                        stepSize: 2
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Liberal <-----> Conservative"
+                    },
+                    gridLines: {
+                        // color: "#FFFFFF"
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        // color: "#FFFFFF"
+                    }
+                }]
+            },
         };
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: CardDirectiveScope) {

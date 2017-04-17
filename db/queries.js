@@ -83,6 +83,7 @@ exports.sourceByName = (sourceName) => {
 }
 
 exports.fillArticleBiases = (threshold, log_max) => {
+  console.log("Thresholding with", threshold, "and", log_max);
     return schema.models.article.findAll({attributes : ['id'], where: { archivalDataFlag: 0}}).then((articles) => {
       return Promise.map(articles, (article) => {
           return schema.models.sentence.findAll({
@@ -94,8 +95,8 @@ exports.fillArticleBiases = (threshold, log_max) => {
                 }
               }
           }).then((sentences) => {
-              var totalSum = 0;``
-              sentences.forEach((sentence) => { totalSum += ((sentence.bias / log_max) * sentence.topicRelevance) });
+              var totalSum = 0;
+              sentences.forEach((sentence) => { totalSum += ((sentence.bias / log_max)) });
               article.bias = 10 * (sentences.length == 0 ? 0 : totalSum / sentences.length);
               // console.log("Setting bias of", article.id, "to", article.bias);
               return schema.models.article.update({
@@ -108,7 +109,9 @@ exports.fillArticleBiases = (threshold, log_max) => {
                   plain: true
               }).then((result) => {});
           });
-      })
+      }, { concurrency: 1000 }).then(() => {
+          console.log("finished Thresholding");
+      });
     });
 }
 

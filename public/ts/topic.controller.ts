@@ -2,7 +2,6 @@ namespace ns3.main {
 
     export class TopicController {
 
-
         chart = {
             labels: [],
             biases: []
@@ -10,6 +9,7 @@ namespace ns3.main {
         barOptions = {
             responsive: true,
             maintainAspectRatio: false,
+            lineAtIndex: 0,
             backgroundColor: [],
             legend: {
                 labels: {
@@ -19,6 +19,7 @@ namespace ns3.main {
             },
             scales: {
                 xAxes:  [{
+                    display: false,
                     ticks: {
                         min: -10,
                         max: 10,
@@ -26,7 +27,7 @@ namespace ns3.main {
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: "Bais (Liberal <-----> Conservative"
+                        labelString: "Liberal <-----> Conservative"
                     },
                     gridLines: {
                         // color: "#FFFFFF"
