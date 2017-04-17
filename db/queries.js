@@ -55,7 +55,7 @@ exports.previews = () => {
         newTopic.sources = results;
         return newTopic;
       });
-    });
+    }, { concurrency: 30 });
   });
 };
 

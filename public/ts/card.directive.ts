@@ -23,9 +23,9 @@ namespace ns3.main.directives {
                 xAxes:  [{
                     display: false,
                     ticks: {
-                        min: -10,
-                        max: 10,
-                        stepSize: 2
+                        min: -5,
+                        max: 5,
+                        stepSize: 1
                     },
                     scaleLabel: {
                         display: true,

@@ -21,8 +21,8 @@ namespace ns3.main {
                 xAxes:  [{
                     display: false,
                     ticks: {
-                        min: -10,
-                        max: 10,
+                        min: -5,
+                        max: 5,
                         stepSize: 2
                     },
                     scaleLabel: {
