@@ -14,15 +14,21 @@ exports.articlesFor = (topic) => {
       }
     ],
     order: ['source.name'],
-    attributes: {
-      include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
-    },
+    // attributes: {
+    //   include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
+    // },
     group: ['source.id', 'articles.id'],
   }).then((results) => {
+    var realResults = [];
     results.forEach((result) => {
+      var sum = 0;
+      var result = result.get({plain: true});
+      result.articles.forEach((article) => {sum += article.bias});
+      result.bias = 5 * (sum / result.articles.length);
       result.articles.length = Math.min(5, result.articles.length); // cap at 5 articles, should use SQL limit btu complicated to preserve avg
+      realResults.push(result);
     });
-    return results;
+    return realResults;
   });
 };
 
@@ -48,11 +54,17 @@ exports.previews = () => {
         },
         group: ['source.id', 'articles.id'],
       }).then((results) => {
+        var realResults = [];
         results.forEach((result) => {
-          result.articles = null;
+          var sum = 0;
+          var result = result.get({plain: true});
+          result.articles.forEach((article) => {sum += article.bias});
+          result.bias = 5 * (sum / result.articles.length);
+          result.articles.length = Math.min(5, result.articles.length); // cap at 5 articles, should use SQL limit btu complicated to preserve avg
+          realResults.push(result);
         });
         var newTopic = topic.get({plain: true});
-        newTopic.sources = results;
+        newTopic.sources = realResults;
         return newTopic;
       });
     }, { concurrency: 30 });
