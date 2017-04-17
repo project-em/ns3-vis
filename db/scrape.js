@@ -314,6 +314,8 @@ function getWebhoseArticles(source, topic) {
         result.posts.forEach((article) => {
           var hashIdx = article.url.lastIndexOf('#');
           var url = article.url.substring(0, hashIdx == -1 ? article.url.length : hashIdx);
+          var qIdx = url.indexOf('?');
+          url = url.substring(0, qIdx == -1 ? url.length : qIdx);
           foundUrls[url] = article;
         });
 
@@ -431,12 +433,12 @@ function pullBodyOfURL(article_data, source) {
         scripts: ["http://code.jquery.com/jquery.js"],
         done: function (err, window) {
             if (err) {
+                console.log(err);
                 reject("Error loading " + article_data.url);
             }
             else {
-                
                 try {
-                  var $ = window.$;
+                  var $ = window.jQuery;
                   var bodyStrings = [];
                   var storyblocks = $(divClassTagFromSource(source, article_data.url).join(', '));
                   storyblocks.each(function(idx, val) {
