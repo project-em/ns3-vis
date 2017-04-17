@@ -1,5 +1,10 @@
 <div>
     <div class="row">
+        <div class="col-md-12">
+            <h3 ng-bind="::ctrl.topic.name"></h3>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12" style="color: white; height: 75vh">
             <canvas id="topic-bar" class="chart chart-horizontal-bar"
                 chart-data="ctrl.chart.biases"
