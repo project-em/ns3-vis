@@ -44,6 +44,11 @@ namespace ns3.main {
             controller: 'TopicController',
             controllerAs: 'ctrl',
             resolve: {
+                topic: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
+                    return $http.get('/api/topic/' + $stateParams['id'] + '/name').then((response) => {
+                        return response.data as types.Topic;
+                    });
+                },
                 data: ($http: ng.IHttpService, $stateParams: ng.ui.IStateParamsService) => {
                     return $http.get('/api/topic/' + $stateParams['id'] + '/articles').then((response) => {
                         return response.data as types.Source[];
