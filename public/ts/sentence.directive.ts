@@ -15,13 +15,6 @@ namespace ns3.main.directives {
 
 
         public sentenceStyle = () => {
-            if (this.$scope.gradient) {
-                console.log("gradient");
-            } else if (!this.$scope.gradient) {
-                console.log("no gradient");
-            } else {
-                console.log("huh");
-            }
 
             if (this.$scope.sentence.topicRelevance < this.$scope.threshold) {
                 var hue = 0;

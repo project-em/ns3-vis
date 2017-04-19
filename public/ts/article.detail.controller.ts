@@ -44,7 +44,7 @@ namespace ns3.main {
             },
         };
 
-        private gradient = false;
+        private gradient = true;
 
         constructor(private article: types.Article,
             private $state: ng.ui.IStateService,
