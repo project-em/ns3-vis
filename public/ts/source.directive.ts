@@ -10,14 +10,9 @@ namespace ns3.main.directives {
                     private $scope: SourceDirectiveScope,
                     private $window: ng.IWindowService) {
             var count = 0;
-            this.$scope.source.articles.map((article) => {
-                this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
-                    (article.name.length > 47 ? "..." : ""));
-                this.chart.biases.push(article.bias);
-            });
             this.lineColor = this.$scope.source.primaryColor == "#FFFFFF" ? "black" : "white";
             this.barOptions = {
-                backgroundColor: "#222222",
+                backgroundColor = [],
                 responsive: true,
                 maintainAspectRatio: false,
                 legend: {
@@ -58,6 +53,12 @@ namespace ns3.main.directives {
                     }]
                 },
             };
+            this.$scope.source.articles.map((article) => {
+                this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
+                    (article.name.length > 47 ? "..." : ""));
+                this.chart.biases.push(article.bias);
+                this.barOptions.backgroundColor.push("#222222");
+            });
         }
 
         lineColor = "#FFFFFF";
