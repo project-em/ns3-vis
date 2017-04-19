@@ -34,6 +34,9 @@ exports.previews = () => {
     where: {
         visible: true
     },
+    attributes : {
+      exclude: ["createdAt", "updatedAt", "visible"]
+    }
   }).then((topics) => {
     return Promise.map(topics, (topic) => {
       return schema.models.source.all({
@@ -47,6 +50,7 @@ exports.previews = () => {
         ],
         order: ['source.name'],
         attributes: {
+          exclude: ["article.createdAt", "article.updatedAt"],
           include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
         },
         group: ['source.id', 'articles.id'],
