@@ -46,6 +46,8 @@ namespace ns3.main {
             private $stateParams: ng.ui.IStateParamsService) {
                 this.barData.push(article.bias);
                 this.barLabels.push("");
+                this.barOptions.backgroundColor.push(article.bias > 0 ? "#ff2339" : "#2238ff");
+                console.log(this.barOptions.backgroundColor);
         }
 
     }
