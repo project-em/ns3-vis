@@ -6,6 +6,13 @@ namespace ns3.main.directives {
 
     export class SourceDirectiveController {
 
+        lineColor = "#FFFFFF";
+
+        chart = {
+            labels: [],
+            biases: []
+        }
+        
         barOptions = {
             backgroundColor: [],
             responsive: true,
@@ -60,13 +67,6 @@ namespace ns3.main.directives {
                 this.chart.biases.push(article.bias);
                 this.barOptions.backgroundColor.push("#222222")
             });
-        }
-
-        lineColor = "#FFFFFF";
-
-        chart = {
-            labels: [],
-            biases: []
         }
 
         private hexToRgb = (hex) => {
