@@ -15,7 +15,6 @@ namespace ns3.main.directives {
 
 
         public sentenceStyle = () => {
-
             if (this.$scope.sentence.topicRelevance < this.$scope.threshold) {
                 var hue = 0;
                 var lightness = 0.75;
