@@ -17,6 +17,7 @@ namespace ns3.main.directives {
             });
             this.lineColor = this.$scope.source.primaryColor == "#FFFFFF" ? "black" : "white";
             this.barOptions = {
+                backgroundColor: "#222222",
                 responsive: true,
                 maintainAspectRatio: false,
                 legend: {
