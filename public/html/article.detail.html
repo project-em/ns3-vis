@@ -3,6 +3,9 @@
         <h3 ng-bind="::ctrl.article.name"></h3>
     </div>
     <div class="col-md-12">
-        <sentence threshold="ctrl.article.threshold" sentence="sentence" ng-repeat="sentence in ctrl.article.sentences"></sentence>
+        <button class="btn btn-default pull-right" ng-class="sentence" ng-click="ctrl.gradient = !ctrl.gradient">{{!ctrl.gradient && 'Turn On' || 'Turn Off'}} Gradient</button>
+    </div>
+    <div class="col-md-12">
+        <sentence threshold="ctrl.article.threshold" sentence="sentence" gradient="ctrl.gradient" ng-repeat="sentence in ctrl.article.sentences"></sentence>
     </div>
 </div>
