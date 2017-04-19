@@ -9,7 +9,49 @@ namespace ns3.main.directives {
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: SourceDirectiveScope,
                     private $window: ng.IWindowService) {
+            this.$scope.source.articles.map((article) => {
+                this.chart.labels.push(article.name.substring(0, Math.min(article.name.length, 47))
+                    + (article.name.length > 47 ? "..." : ""));
+                this.chart.biases.push(article.bias);
+            });
         }
+
+        chart = {
+            labels: [],
+            biases: []
+        }
+
+        barOptions = {
+            lineAtIndex: 0,
+            legend: {
+                labels: {
+                    fontColor: "#FFFFFF",
+                    fontSize: 18
+                }
+            },
+            scales: {
+                xAxes:  [{
+                    display: false,
+                    ticks: {
+                        min: -5,
+                        max: 5,
+                        stepSize: 2
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: "Liberal <-----> Conservative"
+                    },
+                    gridLines: {
+                        // color: "#FFFFFF"
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        // color: "#FFFFFF"
+                    }
+                }]
+            },
+        };
 
         private hexToRgb = (hex) => {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

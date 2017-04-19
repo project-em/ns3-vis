@@ -6,25 +6,25 @@ namespace ns3.main.directives {
 
     export class ArticleDirectiveController {
 
-        barData: number[] = [];
-        barLabels: string[] = [];
-        barOptions = {
-            scales: {
-                xAxes:  [{
-                    ticks: {
-                        min: -10,
-                        max: 10,
-                        stepSize: 2
-                    }
-                }]
-            }
-        };
+        // barData: number[] = [];
+        // barLabels: string[] = [];
+        // barOptions = {
+        //     scales: {
+        //         xAxes:  [{
+        //             ticks: {
+        //                 min: -10,
+        //                 max: 10,
+        //                 stepSize: 2
+        //             }
+        //         }]
+        //     }
+        // };
 
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: ArticleDirectiveScope,
                     private $window: ng.IWindowService) {
-            this.barData.push(this.$scope.article.bias);
-            this.barLabels.push("");
+            // this.barData.push(this.$scope.article.bias);
+            // this.barLabels.push("");
         }
 
         public go = () => {

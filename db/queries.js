@@ -14,21 +14,18 @@ exports.articlesFor = (topic) => {
       }
     ],
     order: ['source.name'],
-    // attributes: {
-    //   include: [[schema.db.fn('AVG', schema.db.col('articles.bias')), 'bias']]
-    // },
     group: ['source.id', 'articles.id'],
   }).then((results) => {
-    var realResults = [];
-    results.forEach((result) => {
+    return Promise.map(results, (result) => {
       var sum = 0;
       var result = result.get({plain: true});
-      result.articles.forEach((article) => {sum += article.bias});
+      result.articles.forEach((article) => {sum += article.bias; article.body.length = Math.min(600, article.body.length)});
       result.bias = 5 * (sum / result.articles.length);
       result.articles.length = Math.min(5, result.articles.length); // cap at 5 articles, should use SQL limit btu complicated to preserve avg
-      realResults.push(result);
+      return result;
+    }, {concurrency: 500}).then((promised) => {
+      return promised;
     });
-    return realResults;
   });
 };
 
