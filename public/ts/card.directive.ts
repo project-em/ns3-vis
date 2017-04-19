@@ -21,23 +21,32 @@ namespace ns3.main.directives {
             },
             scales: {
                 xAxes:  [{
-                    display: false,
                     ticks: {
                         min: -5,
                         max: 5,
-                        stepSize: 1
+                        stepSize: 1,
+                        callback: function(value, index, values) { 
+                            return Math.abs(value);
+                        },
+                        fontColor: "#FFFFFF"
                     },
                     scaleLabel: {
                         display: true,
-                        labelString: "Liberal <-----> Conservative"
+                        fontColor: "#FFFFFF",
+                        labelString: "Liberal <-------> Conservative"
                     },
                     gridLines: {
-                        // color: "#FFFFFF"
+                        display: true,
+                        zeroLineColor: "#FFFFFF",
+                        zeroLineWidth: 3
                     }
                 }],
                 yAxes: [{
                     gridLines: {
                         // color: "#FFFFFF"
+                    },
+                    ticks: {
+                        fontColor: "#FFFFFF",
                     }
                 }]
             },
