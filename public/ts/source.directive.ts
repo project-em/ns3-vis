@@ -9,49 +9,64 @@ namespace ns3.main.directives {
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: SourceDirectiveScope,
                     private $window: ng.IWindowService) {
+            var count = 0;
             this.$scope.source.articles.map((article) => {
-                this.chart.labels.push(article.name.substring(0, Math.min(article.name.length, 47))
-                    + (article.name.length > 47 ? "..." : ""));
+                this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
+                    (article.name.length > 47 ? "..." : ""));
                 this.chart.biases.push(article.bias);
             });
+            this.lineColor = this.$scope.source.primaryColor == "#FFFFFF" ? "black" : "white";
+            this.barOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    labels: {
+                        fontColor: this.lineColor,
+                        fontSize: 18
+                    }
+                },
+                scales: {
+                    xAxes:  [{
+                        ticks: {
+                            min: -5,
+                            max: 5,
+                            stepSize: 1,
+                            callback: function(value, index, values) { 
+                                return Math.abs(value);
+                            },
+                            fontColor: this.lineColor,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            fontColor: this.lineColor,
+                            labelString: "Liberal <-------> Conservative"
+                        },
+                        gridLines: {
+                            display: true,
+                            zeroLineColor: this.lineColor,
+                            zeroLineWidth: 3
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            // color: "#FFFFFF"
+                        },
+                        ticks: {
+                            fontColor: this.lineColor
+                        }
+                    }]
+                },
+            };
         }
+
+        lineColor = "#FFFFFF";
 
         chart = {
             labels: [],
             biases: []
         }
 
-        barOptions = {
-            lineAtIndex: 0,
-            legend: {
-                labels: {
-                    fontColor: "#FFFFFF",
-                    fontSize: 18
-                }
-            },
-            scales: {
-                xAxes:  [{
-                    display: false,
-                    ticks: {
-                        min: -5,
-                        max: 5,
-                        stepSize: 2
-                    },
-                    scaleLabel: {
-                        display: true,
-                        labelString: "Liberal <-----> Conservative"
-                    },
-                    gridLines: {
-                        // color: "#FFFFFF"
-                    }
-                }],
-                yAxes: [{
-                    gridLines: {
-                        // color: "#FFFFFF"
-                    }
-                }]
-            },
-        };
+        barOptions = null;
 
         private hexToRgb = (hex) => {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

@@ -6,19 +6,33 @@ namespace ns3.main.directives {
 
     export class ArticleDirectiveController {
 
-        // barData: number[] = [];
-        // barLabels: string[] = [];
-        // barOptions = {
-        //     scales: {
-        //         xAxes:  [{
-        //             ticks: {
-        //                 min: -10,
-        //                 max: 10,
-        //                 stepSize: 2
-        //             }
-        //         }]
-        //     }
-        // };
+        barData: number[] = [];
+        barLabels: string[] = [];
+        barOptions = {
+            scales: {
+                xAxes:  [{
+                    ticks: {
+                        min: -5,
+                        max: 5,
+                        stepSize: 1,
+                        callback: function(value, index, values) { 
+                            return Math.abs(value);
+                        },
+                        fontColor: "#FFFFFF"
+                    },
+                    scaleLabel: {
+                        display: true,
+                        fontColor: "#FFFFFF",
+                        labelString: "Liberal <-------> Conservative"
+                    },
+                    gridLines: {
+                        display: true,
+                        zeroLineColor: "#FFFFFF",
+                        zeroLineWidth: 3
+                    }
+                }]
+            }
+        };
 
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: ArticleDirectiveScope,
@@ -49,7 +63,8 @@ namespace ns3.main.directives {
         public controllerAs = 'ctrl';
         public templateUrl = 'html/directives/article.html';
         public scope = {
-            article: '='
+            article: '=',
+            buttonColor: "="
         };
 
         static Factory = () => {
