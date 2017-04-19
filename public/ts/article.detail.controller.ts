@@ -52,7 +52,7 @@ namespace ns3.main {
             
                 this.barData.push(article.bias);
                 this.barLabels.push("");
-                this.barOptions.backgroundColor.push(article.bias > 0 ? "#ff2339" : "#2238ff");
+                this.barOptions.backgroundColor.push(article.bias > 0 ? "#e93737" : "#2874e7");
                 console.log(this.barOptions.backgroundColor);
         }
 
