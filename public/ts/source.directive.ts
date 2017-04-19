@@ -6,17 +6,23 @@ namespace ns3.main.directives {
 
     export class SourceDirectiveController {
 
+        lineColor = "#FFFFFF";
+
+        chart = {
+            labels: [],
+            biases: []
+        }
+
+        barOptions = null;
+
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: SourceDirectiveScope,
                     private $window: ng.IWindowService) {
             var count = 0;
-            this.$scope.source.articles.map((article) => {
-                this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
-                    (article.name.length > 47 ? "..." : ""));
-                this.chart.biases.push(article.bias);
-            });
             this.lineColor = this.$scope.source.primaryColor == "#FFFFFF" ? "black" : "white";
-            this.barOptions = {
+
+            var barOptions = {
+                backgroundColor: [],
                 responsive: true,
                 maintainAspectRatio: false,
                 legend: {
@@ -43,8 +49,7 @@ namespace ns3.main.directives {
                         },
                         gridLines: {
                             display: true,
-                            zeroLineColor: this.lineColor,
-                            zeroLineWidth: 3
+                            zeroLineColor: this.lineColor
                         }
                     }],
                     yAxes: [{
@@ -57,16 +62,15 @@ namespace ns3.main.directives {
                     }]
                 },
             };
+
+            this.$scope.source.articles.map((article) => {
+                this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
+                    (article.name.length > 47 ? "..." : ""));
+                this.chart.biases.push(article.bias);
+                barOptions.backgroundColor.push("#b8b8b8");
+            });
+            this.barOptions = barOptions;
         }
-
-        lineColor = "#FFFFFF";
-
-        chart = {
-            labels: [],
-            biases: []
-        }
-
-        barOptions = null;
 
         private hexToRgb = (hex) => {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
