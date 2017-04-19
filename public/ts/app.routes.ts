@@ -19,11 +19,6 @@ namespace ns3.main {
                         return response.data as types.Topic[];
                     });
                 },
-                data: ($http: ng.IHttpService) => {
-                    return $http.get('/api/previews').then((response) => {
-                        return response.data as types.Topic;
-                    });
-                }
             }
         })
         .state('main.home', {

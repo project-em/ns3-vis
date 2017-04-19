@@ -12,9 +12,22 @@ namespace ns3.main.directives {
             scales: {
                 xAxes:  [{
                     ticks: {
-                        min: -10,
-                        max: 10,
-                        stepSize: 2
+                        min: -5,
+                        max: 5,
+                        stepSize: 1,
+                        callback: function(value, index, values) { 
+                            return Math.abs(value);
+                        },
+                        fontColor: "#FFFFFF"
+                    },
+                    scaleLabel: {
+                        display: true,
+                        fontColor: "#FFFFFF",
+                        labelString: "Liberal <---> Conservative"
+                    },
+                    gridLines: {
+                        display: true,
+                        zeroLineColor: "#FFFFFF"
                     }
                 }]
             }
@@ -23,8 +36,8 @@ namespace ns3.main.directives {
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: ArticleDirectiveScope,
                     private $window: ng.IWindowService) {
-            this.barData.push(this.$scope.article.bias);
-            this.barLabels.push("");
+            // this.barData.push(this.$scope.article.bias);
+            // this.barLabels.push("");
         }
 
         public go = () => {
@@ -49,7 +62,8 @@ namespace ns3.main.directives {
         public controllerAs = 'ctrl';
         public templateUrl = 'html/directives/article.html';
         public scope = {
-            article: '='
+            article: '=',
+            buttonColor: "="
         };
 
         static Factory = () => {
