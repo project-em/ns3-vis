@@ -36,8 +36,8 @@ namespace ns3.main.directives {
         constructor(private $state: ng.ui.IStateService, 
                     private $scope: ArticleDirectiveScope,
                     private $window: ng.IWindowService) {
-            this.barData.push(this.$scope.article.bias);
-            this.barLabels.push("");
+            // this.barData.push(this.$scope.article.bias);
+            // this.barLabels.push("");
         }
 
         public go = () => {
@@ -62,7 +62,8 @@ namespace ns3.main.directives {
         public controllerAs = 'ctrl';
         public templateUrl = 'html/directives/article.html';
         public scope = {
-            article: '='
+            article: '=',
+            buttonColor: "="
         };
 
         static Factory = () => {

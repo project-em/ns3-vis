@@ -14,7 +14,18 @@
                     </div>
                 </div>
             </uib-accordion-heading>
-            <article style="color: {{source.secondaryColor}};" ng-repeat="article in source.articles track by article.id" article="article"></article>
+            <div class="row">
+                <div class="col-md-12">
+                    <canvas id="source-bar-{{source.id}}" class="chart chart-horizontal-bar"
+                        style="max-height: 50vh"
+                        chart-data="ctrl.chart.biases"
+                        chart-labels="ctrl.chart.labels"
+                        chart-colors="ctrl.barOptions.backgroundColor"
+                        chart-options="ctrl.barOptions">
+                    </canvas>
+                </div>
+            </div>
+            <article button-color="ctrl.lineColor" style="color: {{source.secondaryColor}};" ng-repeat="article in source.articles track by article.id" article="article"></article>
         </div>
     </uib-accordion>
 </div>

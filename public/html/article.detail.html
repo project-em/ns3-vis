@@ -1,8 +1,22 @@
-<div class="article-detail row">
-    <div class="col-md-12">
-        <h3 style="color: white" ng-bind="::ctrl.article.name"></h3>
+<div class="article-detail container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 style="color: white" ng-bind="::ctrl.article.name"></h3>
+        </div>
     </div>
-    <div class="col-md-12">
-        <sentence threshold="ctrl.article.threshold" sentence="sentence" ng-repeat="sentence in ctrl.article.sentences"></sentence>
+    <div class="row">
+        <div class="col-md-12">
+            <canvas id="article-bar" class="chart chart-horizontal-bar"
+                style="padding-bottom: 20px;"
+                chart-data="ctrl.barData"
+                chart-labels="ctrl.barLabels"
+                chart-options="ctrl.barOptions">
+            </canvas>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <sentence threshold="ctrl.article.threshold" sentence="sentence" ng-repeat="sentence in ctrl.article.sentences"></sentence>
+        </div>
     </div>
 </div>
