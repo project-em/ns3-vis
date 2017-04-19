@@ -21,7 +21,7 @@ namespace ns3.main.directives {
             var count = 0;
             this.lineColor = this.$scope.source.primaryColor == "#FFFFFF" ? "black" : "white";
 
-            barOptions = {
+            var barOptions = {
                 backgroundColor: [],
                 responsive: true,
                 maintainAspectRatio: false,
@@ -49,8 +49,7 @@ namespace ns3.main.directives {
                         },
                         gridLines: {
                             display: true,
-                            zeroLineColor: this.lineColor,
-                            zeroLineWidth: 3
+                            zeroLineColor: this.lineColor
                         }
                     }],
                     yAxes: [{
@@ -68,7 +67,7 @@ namespace ns3.main.directives {
                 this.chart.labels.push(article.name.substring(0, Math.min(47, article.name.length)) +
                     (article.name.length > 47 ? "..." : ""));
                 this.chart.biases.push(article.bias);
-                barOptions.backgroundColor.push("#222222");
+                barOptions.backgroundColor.push("#b8b8b8");
             });
             this.barOptions = barOptions;
         }
