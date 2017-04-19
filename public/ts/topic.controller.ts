@@ -31,12 +31,11 @@ namespace ns3.main {
                     scaleLabel: {
                         display: true,
                         fontColor: "#FFFFFF",
-                        labelString: "Liberal <-------> Conservative"
+                        labelString: "Liberal <---> Conservative"
                     },
                     gridLines: {
                         display: true,
-                        zeroLineColor: "#FFFFFF",
-                        zeroLineWidth: 3
+                        zeroLineColor: "#FFFFFF"
                     }
                 }],
                 yAxes: [{
