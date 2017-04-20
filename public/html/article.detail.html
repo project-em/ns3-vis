@@ -3,9 +3,6 @@
         <div class="col-md-12">
             <h3 style="color: white" ng-bind="::ctrl.article.name"></h3>
         </div>
-        <div class="col-md-12">
-        <button class="btn btn-default pull-right" ng-class="sentence" ng-click="ctrl.gradient = !ctrl.gradient">{{!ctrl.gradient && 'Turn On' || 'Turn Off'}} Gradient</button>
-    </div>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -18,11 +15,27 @@
             </canvas>
         </div>
     </div>
-    <div class="row" id="header">
-            <div class="col-xs-12">
-                <img class="img-responsive center-block" src="/misc/Legend.png"/>
+    <div class="row relevance-control well" id="header">
+        <div class="col-md-12">
+            <div style="min-width: 225px;">
+                <h4>Topic Relevance Control</h4>
             </div>
+            <div style="width: 100%">
+                <rzslider class="custom-slider"
+                        rz-slider-model="slider.value"
+                        rz-slider-options="slider.options"></rzslider>
+            </div>
+            <div style="min-width: 355px;">
+                <sentence threshold="ctrl.article.threshold" sentence="ctrl.demo.liberal" gradient="ctrl.gradient"></sentence>
+                <sentence threshold="ctrl.article.threshold" sentence="ctrl.demo.neutral" gradient="ctrl.gradient"></sentence>
+                <sentence threshold="ctrl.article.threshold" sentence="ctrl.demo.conservative" gradient="ctrl.gradient"></sentence>
+            </div>
+            <div style="min-width: 160px;">
+                <button class="btn btn-primary" ng-class="sentence" ng-click="ctrl.gradient = !ctrl.gradient">{{!ctrl.gradient && 'Turn On' || 'Turn Off'}} Gradient</button>
+            </div>
+
         </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <sentence threshold="ctrl.article.threshold" sentence="sentence" gradient="ctrl.gradient" ng-repeat="sentence in ctrl.article.sentences"></sentence>

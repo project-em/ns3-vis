@@ -11,6 +11,8 @@ namespace ns3.main.directives {
                     private $scope: SentenceDirectiveScope) {
             //console.log($scope.threshold);
             //console.log($scope.sentence.topicRelevance);
+            $scope.sentence.text = $scope.sentence.text.trim();
+            console.log($scope.sentence.text);
         }
 
 
@@ -31,7 +33,9 @@ namespace ns3.main.directives {
                 var hue = this.$scope.sentence.bias < 0 ? 0.6 : 0;
                 var lightness = 0.6;
                 if (this.$scope.gradient) {
-                    lightness = this.$scope.sentence.bias < 0 ? this.convertRange(this.$scope.sentence.bias, [-1, -50], [0.7, 0.35]) : this.convertRange(this.$scope.sentence.bias, [1, 50], [0.7, 0.35]);
+                    lightness = this.$scope.sentence.bias < 0 ? 
+                        this.convertRange(this.$scope.sentence.bias, [-1, -50], [0.7, 0.35]) :
+                        this.convertRange(this.$scope.sentence.bias, [1, 50], [0.7, 0.35]);
                 } else {
                     lightness = 0.6;
                 }
@@ -42,7 +46,7 @@ namespace ns3.main.directives {
             }
         }
 
-        hslToRgb(h, s, l) {
+        public hslToRgb(h, s, l) {
             var r, g, b;
 
             if(s == 0){

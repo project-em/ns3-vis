@@ -9,7 +9,7 @@ namespace ns3.main.types {
     }
 
     export interface Sentence extends Data {
-        content: string;
+        text: string;
         bias: number;
         topicRelevance?: number;
     };
@@ -20,6 +20,7 @@ namespace ns3.main.types {
         body: string;
         topic: Topic;
         bias?: number;
+        threshold?: number;
         sentences?: Sentence[];
     }
 

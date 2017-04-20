@@ -1,7 +1,8 @@
 namespace ns3.main {
 
-
-
+    export interface ArticleScope extends ng.IScope {
+        slider: any;
+    }
     export class ArticleDetailController {
 
         
@@ -46,14 +47,52 @@ namespace ns3.main {
 
         private gradient = true;
 
+        private demo = {
+            liberal: {
+                text: "Liberal",
+                bias: -20
+            },
+            neutral: {
+                text: "Neutral",
+                bias: 0
+            },
+            conservative: {
+                text: "Conservative",
+                bias: 20
+            }
+        }
+
+        private slider;
+
+
         constructor(private article: types.Article,
             private $state: ng.ui.IStateService,
+            private $scope: ArticleScope,
             private $stateParams: ng.ui.IStateParamsService) {
             
                 this.barData.push(article.bias);
                 this.barLabels.push("");
                 this.barOptions.backgroundColor.push(article.bias > 0 ? "#e93737" : "#2874e7");
-                console.log(this.barOptions.backgroundColor);
+
+                $scope.$watch("slider.value", (newValue) => {
+                    this.article.threshold = newValue as number;
+                });
+
+                $scope.slider = {
+                    value: this.article.threshold,
+                    options: {
+                        floor: 0,
+                        ceil: 1,
+                        step: 0.01,
+                        precision: 2,
+                        minLimit: 0,
+                        maxLimit: 1,
+                        showSelectionBar: true,
+                        getPointerColor: (value) => {
+                            return "hsl(0, 0%, " + ((1 - value) * 100) + "%)";
+                        }
+                    }
+                };
         }
 
     }

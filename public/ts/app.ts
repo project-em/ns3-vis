@@ -4,7 +4,7 @@ namespace ns3.main {
         'ui.bootstrap',
         'ui.router',
         'chart.js',
-        'ngTagCloud'
+        'rzModule',
     ]);
 
     export var getModule = () => {
