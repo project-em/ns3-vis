@@ -1,0 +1,104 @@
+.article-detail {
+    .relevance-control {
+        background-color: #4e4e4e;
+        color: white;
+
+        .sentence-wrap {
+            vertical-align: bottom;
+            span.sentence {
+                vertical-align: super !important;
+            }
+        }
+
+        > div {
+            display: flex;
+            flex-direction: row;
+            div {
+                align-self: center;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+
+        sentence {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .custom-slider.rzslider .rz-bar {
+            background: white;
+            height: 2px;
+        }
+        .custom-slider.rzslider .rz-selection {
+            background: black;
+        }
+
+        .custom-slider.rzslider .rz-pointer-min {
+            background-color: white;
+        }
+
+        .custom-slider.rzslider .rz-pointer {
+            width: 8px;
+            height: 16px;
+            top: auto; /* to remove the default positioning */
+            bottom: 0;
+            background-color: white;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        .custom-slider.rzslider .rz-pointer:after {
+            display: none;
+        }
+
+        .custom-slider.rzslider .rz-bubble {
+            bottom: 14px;
+            color: white;
+        }
+
+        .custom-slider.rzslider .rz-limit {
+            font-weight: bold;
+            color: white;
+        }
+
+        .custom-slider.rzslider .rz-tick {
+            width: 1px;
+            height: 10px;
+            margin-left: 4px;
+            border-radius: 0;
+            background: #ffe4d1;
+            top: -1px;
+        }
+
+        .custom-slider.rzslider .rz-tick.rz-selected {
+            background: white;
+        }
+    }
+
+    .btn.btn-primary {
+        height: 100%;
+        background-color: transparent;
+        border: 0px;
+        vertical-align: middle;
+        display: inline-block;
+        border: 1px solid white;
+    }
+
+    .btn.btn-primary:active {
+        border: 0;
+    }
+
+    .btn.btn-primary:focus {
+        border: 0;
+    }
+    
+    .btn.btn-primary:hover {
+        background-color: white;
+        color: black;
+        -o-transition: @hover-transition;
+        -ms-transition: @hover-transition;
+        -moz-transition: @hover-transition;
+        -webkit-transition: @hover-transition;
+        transition: @hover-transition;
+    }
+}
