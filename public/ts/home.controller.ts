@@ -2,11 +2,16 @@ namespace ns3.main {
 
     export class HomeController {
 
-        data: types.Topic[]
+        data: any // key is topicName, value is arr of sources
 
         constructor(private $http: ng.IHttpService) {
             $http.get('/api/previews').then((response) => {
-                this.data = response.data as types.Topic[];
+                this.data = Object.keys(response.data).map((key) => {
+                    return {
+                        "name": key,
+                        "sources": response.data[key]
+                    };
+                });
                 console.log(this.data);
             });
         }

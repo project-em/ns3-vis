@@ -90,6 +90,12 @@ app.post('/api/bias', (request, response) => {
   });
 });
 
+app.post("/api/seed/preview", (request, response) => {
+  return queries.seedSourceTopicBias().then(() => {
+    response.sendStatus(200);
+  });
+});
+
 /* CONFIG */
 
 app.use((req, res) => {
@@ -104,6 +110,7 @@ function biasFill() {
     response.sendStatus(200);
   });
 }
+
 function seed() {
   return scrape.seed().then((result) => {
       console.log("Seed data complete at", new Date());

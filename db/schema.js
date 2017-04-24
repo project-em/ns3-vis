@@ -84,9 +84,38 @@ models.sentence = exports.db.define('sentence', {
     }
 }, { freezeTableName: true });
 
+models.sourceTopicMap = exports.db.define("source2topic", {
+    bias: {
+        type: Sequelize.FLOAT,
+        allowNull: false
+    },
+    topicId: {
+        type: Sequelize.INTEGER,
+        unique: 'sourceTopic',
+        references: {
+            model: models.topic,
+            key: 'id',
+            deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+        }
+    },
+    sourceId: {
+        type: Sequelize.INTEGER,
+        unique: 'sourceTopic',
+        references: {
+            model: models.source,
+            key: 'id',
+            deferrable: Sequelize.Deferrable.INITIALLY_IMMEDIATE
+        }
+    }
+}, { freezeTableName: true });
+
 models.topic.hasMany(models.article);
 models.source.hasMany(models.article);
 models.article.hasMany(models.sentence);
 models.article.belongsTo(models.topic);
 models.article.belongsTo(models.source);
 models.sentence.belongsTo(models.article);
+
+// Mapping tables
+// models.sourceTopicMap.belongsTo(models.source);
+// models.sourceTopicMap.belongsTo(models.topic);
