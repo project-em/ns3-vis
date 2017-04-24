@@ -9,6 +9,7 @@ namespace ns3.main {
                 this.data = Object.keys(response.data).map((key) => {
                     return {
                         "name": key,
+                        "id" : response.data[key][0]["topicId"],
                         "sources": response.data[key]
                     };
                 });
