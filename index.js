@@ -11,6 +11,7 @@ const queries = require('./db/queries.js');
 const store = require('./db/store.js');
 const scrape = require('./db/scrape.js');
 const topics = require('./topics.json');
+const classify = require('./classify.js');
 
 const app = express();
 var redis_internal = require('redis');
@@ -93,6 +94,18 @@ app.post('/api/bias', (request, response) => {
 app.post("/api/seed/preview", (request, response) => {
   return queries.seedSourceTopicBias().then(() => {
     response.sendStatus(200);
+  });
+});
+
+app.post('/api/live/article', (request, response) => {
+  return redis.get("threshold", (err, value) => {
+    return classify.liveBias(request.body.url, value).then((article_id) => {
+      if (!article_id) {
+        response.send(404);
+      } else {
+        response.json(200, article_id);
+      }
+    });
   });
 });
 

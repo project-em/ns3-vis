@@ -143,7 +143,7 @@ exports.seed = () => {
                   console.log("couldn't match", url);
                   return;
                 }
-                return pullBodyOfURL(json, source.url).then((body) => {
+                return pullBodyOfURL(json.url, source.url).then((body) => {
                     var sentences = pullSentencesFromBody(body);
                     if (sentences == null) {
                       sentences = [];
@@ -323,7 +323,7 @@ function getWebhoseArticles(source, topic) {
         var keys = Object.keys(foundUrls);
         return Promise.map(keys, (key) => {
             var value = foundUrls[key];
-            return pullBodyOfURL(value, source).then((body) => {
+            return pullBodyOfURL(value.url, source).then((body) => {
                 var sentences = pullSentencesFromBody(body);
                 if (sentences == null) {
                   sentences = [];
@@ -418,7 +418,7 @@ function pullBodyFromURLSet(articles_data, source) {
     var bodyList = [];
     var totallength = articles_data.length;
     var urlPullPromises = articles_data.map(
-      function(x) { return pullBodyOfURL(x, source); }
+      function(x) { return pullBodyOfURL(x.url, source); }
     );
 
     var stories = Promise.all(urlPullPromises);
@@ -427,27 +427,36 @@ function pullBodyFromURLSet(articles_data, source) {
     
 }
 
-function pullBodyOfURL(article_data, source) {
+exports.scrapeUrlWithSource = pullBodyOfURL;
+
+function pullBodyOfURL(url, source, withTitle = false) {
   return new Promise(function(resolve, reject) {
     jsdom.env({
-        url: article_data.url,
+        url: url,
         scripts: ["http://code.jquery.com/jquery.js"],
         done: function (err, window) {
             if (err) {
                 console.log(err);
-                reject("Error loading " + article_data.url);
+                reject("Error loading " + url);
             }
             else {
                 try {
                   var $ = window.jQuery;
                   var bodyStrings = [];
-                  var storyblocks = $(divClassTagFromSource(source, article_data.url).join(', '));
+                  var storyblocks = $(divClassTagFromSource(source, url).join(', '));
                   storyblocks.each(function(idx, val) {
                       bodyStrings.push($(val).text());
                   });
                   var storyText = bodyStrings.join(" ");
-                  console.log("found", storyblocks.length, "at", article_data.url);
-                  resolve(storyText.trim());
+                  console.log("found", storyblocks.length, "at", url);
+                  if (withTitle) {
+                      resolve({
+                        title: window.title,
+                        body: storyText.trim()
+                      });
+                  } else {
+                      resolve(storyText.trim());
+                  }
                 } catch (ex) {
                   console.log("error in pullBodyOfURL")
                   reject(ex);
