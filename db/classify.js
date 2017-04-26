@@ -2,6 +2,10 @@ const schema = require('./schema.js');
 const scrape = require('./scrape.js');
 const store = require('./store.js');
 const Promise = require('bluebird');
+const request = require('request');
+
+const ML_URL = process.eng["ML_URL"];
+const ML_ROUTE = process.eng["ML_ROUTE"];
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 const MAX_HISTORICAL_FILES = +process.env["MAX_HISTORICAL_FILES"] || 1000000000;
@@ -56,8 +60,6 @@ function scrape (url) {
                     return null;
                 } else {
                     return store.newArticle(article, topic_obj.id, source.id, true).then((article_obj) => {
-                        // do sentence stuff here with machine learning
-                        // also tag bias here
                     }, (article_failure) => {
                         throw article_failure;
                     });
@@ -94,13 +96,32 @@ function propagateBias (article_id, threshold) {
     });
 }
 
+function runLSTM (article_obj) {
+    var post = Promise.promisify(request.post);
+
+    return post(ML_URL + ML_ROUTE,
+        { json: { id: article_obj.id } } ).then((err, resp, body) => {
+        if (!err && resp.statusCode == 200) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+}
+
 function liveBias (url, threshold) {
     return scrape(url).then((article_obj) => {
         if (article_obj) {
             // do machine learning calls here
-            return propagateBias(article_obj.id, threshold).then(() => {
-                return article_obj.id;
-            });
+            return runLSTM(article_obj).then((result) => {
+                if (result) {
+                    return propagateBias(article_obj.id, threshold).then(() => {
+                        return article_obj.id;
+                    });
+                } else {
+                    // error
+                }
+            })
         } else {
             // error
         }
