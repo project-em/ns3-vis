@@ -11,7 +11,7 @@ const queries = require('./db/queries.js');
 const store = require('./db/store.js');
 const scrape = require('./db/scrape.js');
 const topics = require('./topics.json');
-const classify = require('./classify.js');
+const classify = require('./db/classify.js');
 
 const app = express();
 var redis_internal = require('redis');

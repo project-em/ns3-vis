@@ -4,8 +4,8 @@ const store = require('./store.js');
 const Promise = require('bluebird');
 const request = require('request');
 
-const ML_URL = process.eng["ML_URL"];
-const ML_ROUTE = process.eng["ML_ROUTE"];
+const ML_URL = process.env["ML_URL"];
+const ML_ROUTE = process.env["ML_ROUTE"];
 const NYT_KEY = process.env["NYT_KEY"];
 const GUAR_KEY = process.env["GUAR_KEY"];
 const MAX_HISTORICAL_FILES = +process.env["MAX_HISTORICAL_FILES"] || 1000000000;
@@ -41,7 +41,7 @@ function matchSource (url) {
     });
 }
 
-function scrape (url) {
+function live_scrape (url) {
     return matchSource(url).then((matched) => {
         if (matched) {
             return scrape.scrapeUrlWithSource(url, matched.url, true).then((result) => {
@@ -110,7 +110,7 @@ function runLSTM (article_obj) {
 }
 
 function liveBias (url, threshold) {
-    return scrape(url).then((article_obj) => {
+    return live_scrape(url).then((article_obj) => {
         if (article_obj) {
             // do machine learning calls here
             return runLSTM(article_obj).then((result) => {
